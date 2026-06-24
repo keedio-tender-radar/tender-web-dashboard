@@ -2,20 +2,23 @@
 
 import { useEffect, useState } from "react";
 
-import { api, type TenderWithScore } from "@/lib/api";
+import { api, type Stats, type TenderWithScore } from "@/lib/api";
+import { StatsPanel } from "@/components/StatsPanel";
 import { TenderCard } from "@/components/TenderCard";
 
 export default function RadarPage() {
   const [top, setTop] = useState<TenderWithScore[]>([]);
   const [urgent, setUrgent] = useState<TenderWithScore[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([api.top(10), api.urgent(7)])
-      .then(([t, u]) => {
+    Promise.all([api.top(10), api.urgent(7), api.stats()])
+      .then(([t, u, s]) => {
         setTop(t);
         setUrgent(u);
+        setStats(s);
       })
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
@@ -34,6 +37,8 @@ export default function RadarPage() {
           No se pudo conectar con la API ({api.apiUrl}). {error}
         </p>
       )}
+
+      {stats && <StatsPanel stats={stats} />}
 
       {urgent.length > 0 && (
         <div>

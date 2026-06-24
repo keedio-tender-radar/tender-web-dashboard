@@ -54,8 +54,18 @@ export interface ListParams {
   offset?: number;
 }
 
+export interface Stats {
+  total: number;
+  by_status: Record<string, number>;
+  by_source: Record<string, number>;
+  by_recommendation: Record<string, number>;
+  go_count: number;
+  go_budget_total: number;
+}
+
 export const api = {
   apiUrl: API_URL,
+  stats: () => req<Stats>("/api/tenders/stats"),
   listTenders: (params: ListParams = {}) => {
     const qs = new URLSearchParams();
     if (params.status) qs.set("status", params.status);
