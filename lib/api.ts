@@ -60,8 +60,11 @@ export interface Stats {
   by_status: Record<string, number>;
   by_source: Record<string, number>;
   by_recommendation: Record<string, number>;
+  by_cpv: Record<string, number>;
   go_count: number;
   go_budget_total: number;
+  scored_count: number;
+  avg_score: number;
 }
 
 export const api = {
