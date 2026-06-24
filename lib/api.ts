@@ -75,6 +75,15 @@ export const api = {
     const s = qs.toString();
     return req<Tender[]>(`/api/tenders${s ? `?${s}` : ""}`);
   },
+  searchWithScores: (params: ListParams = {}) => {
+    const qs = new URLSearchParams();
+    if (params.status) qs.set("status", params.status);
+    if (params.q) qs.set("q", params.q);
+    if (params.limit != null) qs.set("limit", String(params.limit));
+    if (params.offset != null) qs.set("offset", String(params.offset));
+    const s = qs.toString();
+    return req<TenderWithScore[]>(`/api/tenders/search${s ? `?${s}` : ""}`);
+  },
   top: (limit = 10) => req<TenderWithScore[]>(`/api/tenders/top?limit=${limit}`),
   urgent: (days = 7) => req<TenderWithScore[]>(`/api/tenders/urgent?days=${days}`),
   getTender: (id: string) => req<Tender>(`/api/tenders/${id}`),

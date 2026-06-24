@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { api, type Tender } from "@/lib/api";
+import { api, type TenderWithScore } from "@/lib/api";
 import { TenderCard } from "@/components/TenderCard";
 
 const PAGE_SIZE = 8;
 
 export default function TendersPage() {
-  const [tenders, setTenders] = useState<Tender[]>([]);
+  const [tenders, setTenders] = useState<TenderWithScore[]>([]);
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [q, setQ] = useState(""); // término aplicado (debounced)
@@ -33,7 +33,7 @@ export default function TendersPage() {
     setError(null);
     // pedimos PAGE_SIZE+1 para saber si hay página siguiente
     api
-      .listTenders({
+      .searchWithScores({
         status: status || undefined,
         q: q || undefined,
         limit: PAGE_SIZE + 1,
@@ -80,8 +80,8 @@ export default function TendersPage() {
         <p className="text-neutral-500">No hay licitaciones para este filtro.</p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
-          {visible.map((t) => (
-            <TenderCard key={t.id} item={{ tender: t, score: null }} />
+          {visible.map((it) => (
+            <TenderCard key={it.tender.id} item={it} />
           ))}
         </div>
       )}
