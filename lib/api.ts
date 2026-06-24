@@ -50,6 +50,7 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
 export interface ListParams {
   status?: string;
   q?: string;
+  order?: string;
   limit?: number;
   offset?: number;
 }
@@ -79,6 +80,7 @@ export const api = {
     const qs = new URLSearchParams();
     if (params.status) qs.set("status", params.status);
     if (params.q) qs.set("q", params.q);
+    if (params.order) qs.set("order", params.order);
     if (params.limit != null) qs.set("limit", String(params.limit));
     if (params.offset != null) qs.set("offset", String(params.offset));
     const s = qs.toString();

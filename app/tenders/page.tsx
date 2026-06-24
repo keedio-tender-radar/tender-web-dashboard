@@ -12,6 +12,7 @@ export default function TendersPage() {
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [q, setQ] = useState(""); // término aplicado (debounced)
+  const [order, setOrder] = useState("recent");
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,8 +26,8 @@ export default function TendersPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  // resetea la página al cambiar el filtro de estado
-  useEffect(() => setPage(0), [status]);
+  // resetea la página al cambiar filtro de estado u orden
+  useEffect(() => setPage(0), [status, order]);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -36,13 +37,14 @@ export default function TendersPage() {
       .searchWithScores({
         status: status || undefined,
         q: q || undefined,
+        order,
         limit: PAGE_SIZE + 1,
         offset: page * PAGE_SIZE,
       })
       .then(setTenders)
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
-  }, [status, q, page]);
+  }, [status, q, order, page]);
 
   useEffect(load, [load]);
 
@@ -71,6 +73,14 @@ export default function TendersPage() {
           <option value="interested">Interesa</option>
           <option value="discarded">Descartadas</option>
           <option value="partner">Partner</option>
+        </select>
+        <select
+          value={order}
+          onChange={(e) => setOrder(e.target.value)}
+          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+        >
+          <option value="recent">Más recientes</option>
+          <option value="score">Mejor score</option>
         </select>
       </div>
 
