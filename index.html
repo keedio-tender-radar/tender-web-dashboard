@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keedio Tender Radar</title>
+  <meta name="description" content="Plataforma interna de inteligencia de contratación pública de Keedio: PLACSP/TED → IA → scoring Go/No-Go → radar diario en Telegram." />
+  <style>
+    :root {
+      --bg: #0b1020; --panel: #141a2e; --border: #243049;
+      --txt: #e6ebf5; --muted: #9aa6c0; --brand: #4f8cff; --ok: #2ecc71; --warn: #f5a623;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(1200px 600px at 70% -10%, #1a2340 0%, var(--bg) 55%);
+      color: var(--txt); line-height: 1.55; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 48px 20px 80px; }
+    header { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+    .logo { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--brand), #7b5cff);
+      display: grid; place-items: center; font-size: 24px; }
+    h1 { font-size: 30px; margin: 0; }
+    .tag { color: var(--muted); font-size: 18px; margin: 4px 0 28px; }
+    .lead { font-size: 17px; color: #c8d2ea; max-width: 720px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 28px 0; }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .card h3 { margin: 0 0 6px; font-size: 16px; }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; }
+    .svc { display: flex; flex-direction: column; gap: 10px; }
+    .svc a { color: var(--brand); text-decoration: none; font-size: 14px; }
+    .svc a:hover { text-decoration: underline; }
+    .pill { display: inline-block; font-size: 12px; padding: 2px 9px; border-radius: 999px;
+      background: rgba(46,204,113,.15); color: var(--ok); border: 1px solid rgba(46,204,113,.3); }
+    .pill.dev { background: rgba(245,166,35,.12); color: var(--warn); border-color: rgba(245,166,35,.3); }
+    h2 { font-size: 20px; margin: 40px 0 12px; }
+    pre { background: #0a0f1f; border: 1px solid var(--border); border-radius: 12px; padding: 16px;
+      overflow:auto; color: #b9c6e6; font-size: 13px; }
+    ol.flow { padding-left: 20px; color: #c8d2ea; }
+    ol.flow li { margin: 6px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    footer { margin-top: 48px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 18px; }
+    code { background: #0a0f1f; padding: 1px 6px; border-radius: 6px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">📡</div>
+      <div>
+        <h1>Keedio Tender Radar</h1>
+        <div class="tag">Inteligencia de contratación pública</div>
+      </div>
+    </header>
+
+    <p class="lead">
+      Cada mañana detecta licitaciones públicas relevantes (PLACSP, TED), las analiza con IA,
+      las puntúa según el encaje con Keedio (Go/No-Go) y entrega un <strong>radar diario por
+      Telegram</strong> con acciones a un toque. Fases siguientes: chat documental con citas del
+      pliego (RAG visual), dashboard e inteligencia de mercado.
+    </p>
+
+    <h2>Servicios en vivo</h2>
+    <div class="grid">
+      <div class="card svc">
+        <h3>tender-api <span class="pill">live</span></h3>
+        <p>Núcleo: licitaciones, scoring, acciones.</p>
+        <a href="https://tender-api-67495beb-4f2f-47fc-9c8d-ec14a563525c.fly.dev/docs" target="_blank" rel="noreferrer">API docs (Swagger) →</a>
+        <a href="https://tender-api-67495beb-4f2f-47fc-9c8d-ec14a563525c.fly.dev/health" target="_blank" rel="noreferrer">/health →</a>
+      </div>
+      <div class="card svc">
+        <h3>tender-document-service <span class="pill">live</span></h3>
+        <p>Extracción de pliegos (PDF/DOCX/XLSX/HTML) + chunking.</p>
+        <a href="https://tender-document-service-67495beb-4f2f-47fc-9c8d-ec14a563525c.fly.dev/docs" target="_blank" rel="noreferrer">API docs →</a>
+        <a href="https://tender-document-service-67495beb-4f2f-47fc-9c8d-ec14a563525c.fly.dev/health" target="_blank" rel="noreferrer">/health →</a>
+      </div>
+      <div class="card svc">
+        <h3>tender-visual-rag <span class="pill dev">fake backend</span></h3>
+        <p>RAG visual por expediente (PixelRAG / Qwen3-VL).</p>
+        <a href="https://tender-visual-rag-67495beb-4f2f-47fc-9c8d-ec14a563525c.fly.dev/docs" target="_blank" rel="noreferrer">API docs →</a>
+        <a href="https://tender-visual-rag-67495beb-4f2f-47fc-9c8d-ec14a563525c.fly.dev/health" target="_blank" rel="noreferrer">/health →</a>
+      </div>
+    </div>
+
+    <h2>El hilo del radar diario</h2>
+    <ol class="flow">
+      <li><strong>Ingesta</strong> — lee PLACSP/TED, normaliza y filtra por CPV/keywords del perfil Keedio.</li>
+      <li><strong>tender-api</strong> — persiste la licitación (PostgreSQL).</li>
+      <li><strong>Análisis IA + scoring</strong> — resumen, requisitos, riesgos y nota Go/No-Go (9 dimensiones).</li>
+      <li><strong>Telegram</strong> — radar diario priorizado con botones: interesa · descartar · partner.</li>
+    </ol>
+
+    <h2>Ejemplo de radar</h2>
+    <pre>📊 Keedio Tender Radar — Resumen diario
+
+Analizadas: 184 · Relevantes: 9 · Prioritarias: 3
+
+1. Plataforma de datos sanitarios
+   Score: 92/100 · GO · 620.000 € · cierre 15/07/2026
+2. Servicio de IA documental
+   Score: 87/100 · REVISAR · 280.000 € · cierre 18/07/2026
+
+[✅ Interesa] [❌ Descartar] [🤝 Partner] [📄 Informe]</pre>
+
+    <h2>Estado de la plataforma</h2>
+    <table>
+      <tr><th>Capacidad</th><th>Repos</th><th>Estado</th></tr>
+      <tr><td>MVP-1 · Radar diario</td><td>api · ingestion · ai-analysis · telegram-bot · contracts · infra · docs</td><td>✅ construido</td></tr>
+      <tr><td>MVP-2 · Pliegos</td><td>tender-document-service</td><td>✅ desplegado</td></tr>
+      <tr><td>Precisión · RAG visual</td><td>tender-visual-rag (PixelRAG)</td><td>◐ desplegado (backend fake)</td></tr>
+      <tr><td>MVP-3 · Dashboard</td><td>tender-web-dashboard</td><td>○ próximamente (esta página es un placeholder)</td></tr>
+    </table>
+
+    <footer>
+      Keedio Tender Radar — plataforma interna de Keedio · contratación pública con IA.
+      <br/>Esta es una landing/status temporal; el dashboard operativo (Next.js) llega en el MVP-3.
+    </footer>
+  </div>
+</body>
+</html>
