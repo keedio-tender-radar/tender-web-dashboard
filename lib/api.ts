@@ -70,6 +70,13 @@ export interface Stats {
 export const api = {
   apiUrl: API_URL,
   stats: () => req<Stats>("/api/tenders/stats"),
+  exportCsvUrl: (params: { status?: string; q?: string } = {}) => {
+    const qs = new URLSearchParams();
+    if (params.status) qs.set("status", params.status);
+    if (params.q) qs.set("q", params.q);
+    const s = qs.toString();
+    return `${API_URL}/api/tenders/export.csv${s ? `?${s}` : ""}`;
+  },
   listTenders: (params: ListParams = {}) => {
     const qs = new URLSearchParams();
     if (params.status) qs.set("status", params.status);

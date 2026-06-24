@@ -82,6 +82,12 @@ export default function TendersPage() {
           <option value="recent">Más recientes</option>
           <option value="score">Mejor score</option>
         </select>
+        <a
+          href={api.exportCsvUrl({ status: status || undefined, q: q || undefined })}
+          className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+        >
+          ⬇ CSV
+        </a>
       </div>
 
       {error && <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>}
