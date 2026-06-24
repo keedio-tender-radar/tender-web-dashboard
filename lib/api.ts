@@ -47,10 +47,24 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+export interface ListParams {
+  status?: string;
+  q?: string;
+  limit?: number;
+  offset?: number;
+}
+
 export const api = {
   apiUrl: API_URL,
-  listTenders: (status?: string) =>
-    req<Tender[]>(`/api/tenders${status ? `?status=${status}` : ""}`),
+  listTenders: (params: ListParams = {}) => {
+    const qs = new URLSearchParams();
+    if (params.status) qs.set("status", params.status);
+    if (params.q) qs.set("q", params.q);
+    if (params.limit != null) qs.set("limit", String(params.limit));
+    if (params.offset != null) qs.set("offset", String(params.offset));
+    const s = qs.toString();
+    return req<Tender[]>(`/api/tenders${s ? `?${s}` : ""}`);
+  },
   top: (limit = 10) => req<TenderWithScore[]>(`/api/tenders/top?limit=${limit}`),
   urgent: (days = 7) => req<TenderWithScore[]>(`/api/tenders/urgent?days=${days}`),
   getTender: (id: string) => req<Tender>(`/api/tenders/${id}`),
