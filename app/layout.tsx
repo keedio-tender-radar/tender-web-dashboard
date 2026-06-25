@@ -26,6 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/market" className="text-sm text-neutral-400 hover:text-white">
               Mercado
             </Link>
+            <Link href="/ask" className="text-sm text-neutral-400 hover:text-white">
+              Pregúntale al pliego
+            </Link>
           </nav>
         </header>
         <main className="mx-auto max-w-5xl px-5 py-8">{children}</main>
