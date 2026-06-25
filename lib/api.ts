@@ -111,6 +111,7 @@ export const api = {
       body: JSON.stringify({ action, actor: "dashboard" }),
     }),
   extract: (id: string) => req<Extraction>(`/api/tenders/${id}/extract`, { method: "POST" }),
+  reanalyze: (id: string) => req<TenderScore>(`/api/tenders/${id}/reanalyze`, { method: "POST" }),
 };
 
 export interface ExtractionChunk {
