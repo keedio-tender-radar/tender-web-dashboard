@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 
-import { api, type Tender, type TenderScore } from "@/lib/api";
+import { api, type Extraction, type Tender, type TenderScore } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
 
 const ACTIONS: { action: string; label: string }[] = [
@@ -18,6 +18,9 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [score, setScore] = useState<TenderScore | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [extraction, setExtraction] = useState<Extraction | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const [extractError, setExtractError] = useState<string | null>(null);
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -29,6 +32,19 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   }
 
   useEffect(load, [id]);
+
+  async function doExtract() {
+    setExtracting(true);
+    setExtractError(null);
+    setExtraction(null);
+    try {
+      setExtraction(await api.extract(id));
+    } catch (e) {
+      setExtractError(String(e));
+    } finally {
+      setExtracting(false);
+    }
+  }
 
   async function act(action: string) {
     setMsg(null);
@@ -90,6 +106,39 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           </ul>
         </div>
       )}
+
+      <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold">Pliego / documento</h2>
+          <button
+            onClick={doExtract}
+            disabled={extracting}
+            className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+          >
+            {extracting ? "Extrayendo…" : "Extraer documento"}
+          </button>
+        </div>
+        {extractError && <p className="text-sm text-red-300">{extractError}</p>}
+        {extraction && (
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-neutral-400">
+              Tipo <span className="font-medium text-neutral-200">{extraction.kind}</span> ·{" "}
+              {extraction.char_count.toLocaleString("es-ES")} caracteres ·{" "}
+              {extraction.chunk_count} fragmentos
+            </p>
+            {extraction.chunks.map((c) => (
+              <details key={c.ordinal} className="text-sm">
+                <summary className="cursor-pointer text-neutral-300">
+                  {c.section ?? `Fragmento ${c.ordinal + 1}`}
+                </summary>
+                <p className="mt-1 whitespace-pre-wrap text-neutral-400">
+                  {c.content.slice(0, 600)}
+                </p>
+              </details>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-wrap gap-2">
         {ACTIONS.map((a) => (

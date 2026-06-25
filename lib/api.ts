@@ -110,4 +110,18 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ action, actor: "dashboard" }),
     }),
+  extract: (id: string) => req<Extraction>(`/api/tenders/${id}/extract`, { method: "POST" }),
 };
+
+export interface ExtractionChunk {
+  ordinal: number;
+  section: string | null;
+  content: string;
+}
+
+export interface Extraction {
+  kind: string;
+  char_count: number;
+  chunk_count: number;
+  chunks: ExtractionChunk[];
+}
