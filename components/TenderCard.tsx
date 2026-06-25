@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { TenderWithScore } from "@/lib/api";
+import { trafficLight, type TenderWithScore } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
 
 function money(amount: number | null, currency = "EUR"): string {
@@ -24,8 +24,11 @@ export function TenderCard({ item }: { item: TenderWithScore }) {
         {t.deadline ? ` · cierre ${t.deadline.slice(0, 10)}` : ""}
         {t.buyer ? ` · ${t.buyer}` : ""}
       </p>
-      <p className="mt-1 text-xs uppercase tracking-wide text-neutral-500">
-        {t.source} · {t.status}
+      <p className="mt-1 flex items-center justify-between text-xs uppercase tracking-wide text-neutral-500">
+        <span>
+          {t.source} · {t.status}
+        </span>
+        <span className="normal-case">{trafficLight(item.score, t.deadline).label}</span>
       </p>
     </Link>
   );

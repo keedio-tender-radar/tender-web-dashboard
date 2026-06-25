@@ -53,6 +53,59 @@ export interface ListParams {
   order?: string;
   limit?: number;
   offset?: number;
+  source?: string;
+  contracting_body?: string;
+  recommendation?: string;
+  traffic_light?: string;
+  min_score?: number;
+  max_days_remaining?: number;
+}
+
+export type TrafficLight = "green" | "yellow" | "red" | "gray";
+
+export interface LearningInsights {
+  external_tender_id: string;
+  similar_count: number;
+  submitted_similar_count: number;
+  won_similar_count: number;
+  lost_similar_count: number;
+  average_historical_score: number | null;
+  recommendation: string;
+  similar_tenders: {
+    tender_id: string;
+    title: string;
+    buyer: string | null;
+    decision: string;
+    outcome: string | null;
+    final_score: number | null;
+    similarity: number;
+  }[];
+}
+
+export interface DecisionInput {
+  decision: string;
+  outcome?: string;
+  final_score?: number;
+  reason?: string;
+  tags?: string[];
+}
+
+// Semáforo client-side (réplica de services/semaphore.py) para no llamar N veces a la API.
+export function trafficLight(score: TenderScore | null, deadline: string | null): {
+  light: TrafficLight;
+  label: string;
+} {
+  const total = score?.total ?? null;
+  const rec = score?.recommendation ?? null;
+  const days = deadline ? Math.floor((new Date(deadline).getTime() - Date.now()) / 86400000) : null;
+  if (total === null && days === null) return { light: "gray", label: "⚪ Sin datos" };
+  if (days !== null && days < 0) return { light: "red", label: "🔴 Vencida" };
+  if (rec === "no_go" || (total !== null && total < 50)) return { light: "red", label: "🔴 Descartar" };
+  if (rec === "revisar" || rec === "partner" || (total !== null && total < 70) || (days !== null && days <= 7))
+    return { light: "yellow", label: "🟡 Revisar" };
+  if (total !== null && total >= 70 && (days === null || days > 7))
+    return { light: "green", label: "🟢 Prioritaria" };
+  return { light: "gray", label: "⚪ Sin datos" };
 }
 
 export interface Stats {
@@ -91,11 +144,21 @@ export const api = {
     if (params.status) qs.set("status", params.status);
     if (params.q) qs.set("q", params.q);
     if (params.order) qs.set("order", params.order);
+    if (params.source) qs.set("source", params.source);
+    if (params.contracting_body) qs.set("contracting_body", params.contracting_body);
+    if (params.recommendation) qs.set("recommendation", params.recommendation);
+    if (params.traffic_light) qs.set("traffic_light", params.traffic_light);
+    if (params.min_score != null) qs.set("min_score", String(params.min_score));
+    if (params.max_days_remaining != null)
+      qs.set("max_days_remaining", String(params.max_days_remaining));
     if (params.limit != null) qs.set("limit", String(params.limit));
     if (params.offset != null) qs.set("offset", String(params.offset));
     const s = qs.toString();
     return req<TenderWithScore[]>(`/api/tenders/search${s ? `?${s}` : ""}`);
   },
+  learningInsights: (id: string) => req<LearningInsights>(`/api/tenders/${id}/learning-insights`),
+  recordDecision: (id: string, body: DecisionInput) =>
+    req(`/api/tenders/${id}/decision`, { method: "POST", body: JSON.stringify(body) }),
   top: (limit = 10) => req<TenderWithScore[]>(`/api/tenders/top?limit=${limit}`),
   urgent: (days = 7) => req<TenderWithScore[]>(`/api/tenders/urgent?days=${days}`),
   getTender: (id: string) => req<Tender>(`/api/tenders/${id}`),
