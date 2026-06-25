@@ -140,23 +140,33 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Pliego / documento</h2>
-          <div className="flex gap-2">
-            <button
-              onClick={doExtract}
-              disabled={extracting}
-              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
-            >
-              {extracting ? "…" : "Extraer documento"}
-            </button>
-            <button
-              onClick={doReanalyze}
-              disabled={extracting}
-              className="rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-50"
-            >
-              {extracting ? "…" : "Re-analizar con el pliego"}
-            </button>
-          </div>
+          {tender?.url ? (
+            <div className="flex gap-2">
+              <button
+                onClick={doExtract}
+                disabled={extracting}
+                className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+              >
+                {extracting ? "…" : "Extraer documento"}
+              </button>
+              <button
+                onClick={doReanalyze}
+                disabled={extracting}
+                className="rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-50"
+              >
+                {extracting ? "…" : "Re-analizar con el pliego"}
+              </button>
+            </div>
+          ) : (
+            <span className="text-sm text-neutral-500">Sin URL de documento</span>
+          )}
         </div>
+        {!tender?.url && (
+          <p className="text-sm text-neutral-400">
+            Esta licitación no tiene URL de pliego (p. ej. datos de ejemplo). La extracción y el
+            re-análisis con el pliego no están disponibles.
+          </p>
+        )}
         {extractError && <p className="text-sm text-red-300">{extractError}</p>}
         {extraction && (
           <div className="flex flex-col gap-2">
