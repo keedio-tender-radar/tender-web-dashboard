@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 
-import { api, type Extraction, type Tender, type TenderScore } from "@/lib/api";
+import { api, type AskAnswer, type Extraction, type Tender, type TenderScore } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
 
 const ACTIONS: { action: string; label: string }[] = [
@@ -21,6 +21,9 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [extraction, setExtraction] = useState<Extraction | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState<string | null>(null);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState<AskAnswer | null>(null);
+  const [asking, setAsking] = useState(false);
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -57,6 +60,19 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       setExtractError(String(e));
     } finally {
       setExtracting(false);
+    }
+  }
+
+  async function doAsk() {
+    if (!question.trim()) return;
+    setAsking(true);
+    setAnswer(null);
+    try {
+      setAnswer(await api.ask(id, question.trim()));
+    } catch (e) {
+      setAnswer({ backend: "error", answer: String(e), sources: [] });
+    } finally {
+      setAsking(false);
     }
   }
 
@@ -157,6 +173,45 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
                 <p className="mt-1 whitespace-pre-wrap text-neutral-400">
                   {c.content.slice(0, 600)}
                 </p>
+              </details>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <h2 className="font-semibold">Preguntar al pliego</h2>
+        <div className="flex gap-2">
+          <input
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && doAsk()}
+            placeholder="¿Qué solvencia técnica exige el pliego?"
+            className="grow rounded-lg border border-neutral-700 bg-[#0b1020] px-3 py-2 text-sm"
+          />
+          <button
+            onClick={doAsk}
+            disabled={asking || !question.trim()}
+            className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-50"
+          >
+            {asking ? "…" : "Preguntar"}
+          </button>
+        </div>
+        {answer && (
+          <div className="flex flex-col gap-2">
+            {answer.answer && <p className="whitespace-pre-wrap text-sm">{answer.answer}</p>}
+            <p className="text-xs text-neutral-500">
+              motor: {answer.backend}
+              {answer.sources.length > 0 ? ` · ${answer.sources.length} fragmento(s)` : ""}
+            </p>
+            {answer.sources.map((s, i) => (
+              <details key={i} className="text-sm">
+                <summary className="cursor-pointer text-neutral-300">
+                  {s.section ?? (s.page != null ? `Página ${s.page}` : `Fuente ${i + 1}`)}
+                </summary>
+                {s.content && (
+                  <p className="mt-1 whitespace-pre-wrap text-neutral-400">{s.content}</p>
+                )}
               </details>
             ))}
           </div>

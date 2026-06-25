@@ -112,7 +112,24 @@ export const api = {
     }),
   extract: (id: string) => req<Extraction>(`/api/tenders/${id}/extract`, { method: "POST" }),
   reanalyze: (id: string) => req<TenderScore>(`/api/tenders/${id}/reanalyze`, { method: "POST" }),
+  ask: (id: string, question: string, topK = 5) =>
+    req<AskAnswer>(`/api/tenders/${id}/ask`, {
+      method: "POST",
+      body: JSON.stringify({ question, top_k: topK }),
+    }),
 };
+
+export interface AskSource {
+  section?: string | null;
+  content?: string;
+  page?: number;
+}
+
+export interface AskAnswer {
+  backend: string;
+  answer: string | null;
+  sources: AskSource[];
+}
 
 export interface ExtractionChunk {
   ordinal: number;
