@@ -98,9 +98,10 @@ export default function AskPage() {
       )}
 
       <p className="text-xs text-neutral-500">
-        Motor actual: <code>extractive</code> (texto del pliego). Conectando el backend visual-rag
-        (VISUAL_RAG_URL) pasará a <code>visual-rag</code> con respuestas del modelo vision-language y
-        citas de página.
+        El motor usado aparece en cada respuesta: <code>visual-rag</code> (servicio tender-visual-rag
+        por expediente) o <code>extractive</code> (texto del pliego) como respaldo. Con el backend
+        real PixelRAG/Qwen3-VL la recuperación es visual y la respuesta la genera el modelo
+        vision-language con citas de página.
       </p>
     </section>
   );
