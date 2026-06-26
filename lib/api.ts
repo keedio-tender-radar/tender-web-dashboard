@@ -99,6 +99,14 @@ export interface Workspace {
   note: string;
 }
 
+export interface GeneratedDoc {
+  id: string;
+  kind: string;
+  title: string;
+  content: string;
+  generated_by: string;
+}
+
 // Semáforo client-side (réplica de services/semaphore.py) para no llamar N veces a la API.
 export function trafficLight(score: TenderScore | null, deadline: string | null): {
   light: TrafficLight;
@@ -170,6 +178,10 @@ export const api = {
     req(`/api/tenders/${id}/decision`, { method: "POST", body: JSON.stringify(body) }),
   markInteresting: (id: string) =>
     req<Workspace>(`/api/tenders/${id}/mark-interesting`, { method: "POST" }),
+  generateOfferDrafts: (id: string) =>
+    req<{ count: number }>(`/api/tenders/${id}/generate-offer-drafts`, { method: "POST" }),
+  generatedDocuments: (id: string) =>
+    req<GeneratedDoc[]>(`/api/tenders/${id}/generated-documents`),
   top: (limit = 10) => req<TenderWithScore[]>(`/api/tenders/top?limit=${limit}`),
   urgent: (days = 7) => req<TenderWithScore[]>(`/api/tenders/urgent?days=${days}`),
   getTender: (id: string) => req<Tender>(`/api/tenders/${id}`),

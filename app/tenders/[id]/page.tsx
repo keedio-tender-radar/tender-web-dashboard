@@ -7,6 +7,7 @@ import {
   trafficLight,
   type AskAnswer,
   type Extraction,
+  type GeneratedDoc,
   type LearningInsights,
   type Tender,
   type TenderScore,
@@ -41,6 +42,8 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [outcome, setOutcome] = useState("pendiente");
   const [reason, setReason] = useState("");
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
+  const [drafts, setDrafts] = useState<GeneratedDoc[]>([]);
+  const [generating, setGenerating] = useState(false);
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -50,9 +53,24 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       })
       .catch((e) => setError(String(e)));
     api.learningInsights(id).then(setInsights).catch(() => setInsights(null));
+    api.generatedDocuments(id).then(setDrafts).catch(() => setDrafts([]));
   }
 
   useEffect(load, [id]);
+
+  async function doGenerateDrafts() {
+    setGenerating(true);
+    setMsg(null);
+    try {
+      const r = await api.generateOfferDrafts(id);
+      setMsg(`Borradores generados: ${r.count}`);
+      setDrafts(await api.generatedDocuments(id));
+    } catch (e) {
+      setError(String(e));
+    } finally {
+      setGenerating(false);
+    }
+  }
 
   async function saveDecision() {
     setMsg(null);
@@ -341,14 +359,23 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       </div>
 
       <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold">Expediente</h2>
-          <button
-            onClick={doMarkInteresting}
-            className="rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark"
-          >
-            ⭐ Interesa → crear expediente
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={doMarkInteresting}
+              className="rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark"
+            >
+              ⭐ Interesa → crear expediente
+            </button>
+            <button
+              onClick={doGenerateDrafts}
+              disabled={generating}
+              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+            >
+              {generating ? "Generando…" : "📝 Generar borradores"}
+            </button>
+          </div>
         </div>
         {workspace && (
           <div className="text-sm">
@@ -369,6 +396,24 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
               ))}
             </ul>
             <p className="mt-2 text-xs text-neutral-500">{workspace.note}</p>
+          </div>
+        )}
+        {drafts.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <p className="text-sm text-neutral-400">
+              Borradores de oferta ({drafts.length}):
+            </p>
+            {drafts.map((d) => (
+              <details key={d.id} className="text-sm">
+                <summary className="cursor-pointer text-neutral-200">
+                  📄 {d.title}{" "}
+                  <span className="text-xs text-neutral-500">({d.generated_by})</span>
+                </summary>
+                <pre className="mt-1 overflow-x-auto whitespace-pre-wrap rounded bg-[#0b1020] p-2 text-xs text-neutral-300">
+                  {d.content}
+                </pre>
+              </details>
+            ))}
           </div>
         )}
       </div>
