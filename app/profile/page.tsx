@@ -68,7 +68,7 @@ export default function ProfilePage() {
                 value={profile[f.key].join(", ")}
                 onChange={(e) => setField(f.key, e.target.value)}
                 rows={2}
-                className="rounded-lg border border-neutral-700 bg-[#0b1020] px-3 py-2 text-sm"
+                className="rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
               />
             </div>
           ))}

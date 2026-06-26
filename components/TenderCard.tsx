@@ -14,7 +14,7 @@ export function TenderCard({ item }: { item: TenderWithScore }) {
   return (
     <Link
       href={`/tenders/${t.id}`}
-      className="block rounded-xl border border-neutral-800 bg-[#141a2e] p-4 transition hover:border-brand"
+      className="block card transition hover:border-brand"
     >
       <div className="mb-2 flex items-start justify-between gap-3">
         <h3 className="font-semibold leading-snug">{t.title}</h3>

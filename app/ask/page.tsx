@@ -47,11 +47,11 @@ export default function AskPage() {
 
       {error && <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>}
 
-      <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+      <div className="flex flex-col gap-3 card">
         <select
           value={tenderId}
           onChange={(e) => setTenderId(e.target.value)}
-          className="rounded-lg border border-neutral-700 bg-[#0b1020] px-3 py-2 text-sm"
+          className="rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
         >
           {tenders.length === 0 && <option value="">No hay licitaciones puntuadas</option>}
           {tenders.map((tw) => (
@@ -67,7 +67,7 @@ export default function AskPage() {
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && ask()}
             placeholder="¿Qué solvencia técnica exige el pliego?"
-            className="grow rounded-lg border border-neutral-700 bg-[#0b1020] px-3 py-2 text-sm"
+            className="grow rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
           />
           <button
             onClick={ask}
@@ -80,7 +80,7 @@ export default function AskPage() {
       </div>
 
       {answer && (
-        <div className="flex flex-col gap-2 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="flex flex-col gap-2 card">
           {answer.answer && <p className="whitespace-pre-wrap">{answer.answer}</p>}
           <p className="text-xs text-neutral-500">
             motor: {answer.backend}

@@ -15,7 +15,7 @@ export function BarList({
   const max = entries.reduce((m, [, v]) => Math.max(m, v), 0) || 1;
 
   return (
-    <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+    <div className="card">
       <h3 className="mb-3 font-semibold">{title}</h3>
       {entries.length === 0 ? (
         <p className="text-sm text-neutral-500">Sin datos.</p>

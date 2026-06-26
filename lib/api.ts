@@ -107,6 +107,19 @@ export interface Profile {
   areas: string[];
 }
 
+export interface Note {
+  id: string;
+  author: string | null;
+  body: string;
+  created_at: string;
+}
+
+export interface MarketStats {
+  top_buyers: Record<string, number>;
+  by_month: Record<string, number>;
+  avg_budget_by_source: Record<string, number>;
+}
+
 export interface Duplicate {
   id: string;
   source: string;
@@ -225,6 +238,13 @@ export const api = {
     req<Profile>("/api/profile", { method: "PUT", body: JSON.stringify(body) }),
   getAnalysis: (id: string) => req<Analysis>(`/api/tenders/${id}/analysis`),
   getDuplicates: (id: string) => req<Duplicate[]>(`/api/tenders/${id}/duplicates`),
+  getNotes: (id: string) => req<Note[]>(`/api/tenders/${id}/notes`),
+  addNote: (id: string, body: string, author?: string) =>
+    req<Note>(`/api/tenders/${id}/notes`, {
+      method: "POST",
+      body: JSON.stringify({ body, author }),
+    }),
+  marketStats: () => req<MarketStats>("/api/tenders/stats/market"),
   packageMdUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.md`,
   authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
   authCheck: (password: string) =>

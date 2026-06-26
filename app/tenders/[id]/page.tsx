@@ -11,6 +11,7 @@ import {
   type Extraction,
   type GeneratedDoc,
   type LearningInsights,
+  type Note,
   type SubmissionPackage,
   type Tender,
   type TenderScore,
@@ -51,6 +52,8 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [pkg, setPkg] = useState<SubmissionPackage | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [duplicates, setDuplicates] = useState<Duplicate[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [noteBody, setNoteBody] = useState("");
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -63,6 +66,18 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
     api.generatedDocuments(id).then(setDrafts).catch(() => setDrafts([]));
     api.getAnalysis(id).then(setAnalysis).catch(() => setAnalysis(null));
     api.getDuplicates(id).then(setDuplicates).catch(() => setDuplicates([]));
+    api.getNotes(id).then(setNotes).catch(() => setNotes([]));
+  }
+
+  async function addNote() {
+    if (!noteBody.trim()) return;
+    try {
+      await api.addNote(id, noteBody.trim(), "equipo");
+      setNoteBody("");
+      setNotes(await api.getNotes(id));
+    } catch (e) {
+      setError(String(e));
+    }
   }
 
   useEffect(load, [id]);
@@ -235,7 +250,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       {tender.summary && <p className="text-neutral-200">{tender.summary}</p>}
 
       {analysis?.summary && (
-        <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="card">
           <h2 className="mb-1 font-semibold">Análisis IA</h2>
           <p className="whitespace-pre-wrap text-sm text-neutral-200">{analysis.summary}</p>
           {analysis.model_version && (
@@ -245,7 +260,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       )}
 
       {score && (
-        <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="card">
           <h2 className="mb-2 font-semibold">Scoring Go/No-Go</h2>
           <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-3">
             {Object.entries(score.breakdown).map(([k, v]) => (
@@ -265,7 +280,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         </div>
       )}
 
-      <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+      <div className="flex flex-col gap-3 card">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Pliego / documento</h2>
           {tender?.url ? (
@@ -317,7 +332,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         )}
       </div>
 
-      <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+      <div className="flex flex-col gap-3 card">
         <h2 className="font-semibold">Preguntar al pliego</h2>
         <div className="flex gap-2">
           <input
@@ -325,7 +340,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && doAsk()}
             placeholder="¿Qué solvencia técnica exige el pliego?"
-            className="grow rounded-lg border border-neutral-700 bg-[#0b1020] px-3 py-2 text-sm"
+            className="grow rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
           />
           <button
             onClick={doAsk}
@@ -357,13 +372,13 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-2 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="flex flex-col gap-2 card">
           <h2 className="font-semibold">Decisión (alimenta el aprendizaje)</h2>
           <div className="flex flex-wrap gap-2">
             <select
               value={decision}
               onChange={(e) => setDecision(e.target.value)}
-              className="rounded-lg border border-neutral-700 bg-[#0b1020] px-2 py-1.5 text-sm"
+              className="rounded-lg border border-[var(--border)] bg-[#0b1020] px-2 py-1.5 text-sm"
             >
               {DECISIONS.map((d) => (
                 <option key={d}>{d}</option>
@@ -372,7 +387,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             <select
               value={outcome}
               onChange={(e) => setOutcome(e.target.value)}
-              className="rounded-lg border border-neutral-700 bg-[#0b1020] px-2 py-1.5 text-sm"
+              className="rounded-lg border border-[var(--border)] bg-[#0b1020] px-2 py-1.5 text-sm"
             >
               {OUTCOMES.map((o) => (
                 <option key={o}>{o}</option>
@@ -383,7 +398,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Motivo (opcional)"
-            className="rounded-lg border border-neutral-700 bg-[#0b1020] px-3 py-1.5 text-sm"
+            className="rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-1.5 text-sm"
           />
           <button
             onClick={saveDecision}
@@ -393,7 +408,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           </button>
         </div>
 
-        <div className="flex flex-col gap-2 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="flex flex-col gap-2 card">
           <h2 className="font-semibold">Aprendizaje histórico</h2>
           {insights ? (
             <div className="text-sm text-neutral-300">
@@ -418,7 +433,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+      <div className="flex flex-col gap-3 card">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold">Expediente</h2>
           <div className="flex gap-2">
@@ -510,6 +525,40 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             </ul>
             <p className="text-xs text-neutral-500">{pkg.note}</p>
           </div>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-3 card">
+        <h2 className="font-semibold">Notas del equipo</h2>
+        <div className="flex gap-2">
+          <input
+            value={noteBody}
+            onChange={(e) => setNoteBody(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addNote()}
+            placeholder="Añade una nota…"
+            className="grow rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
+          />
+          <button
+            onClick={addNote}
+            disabled={!noteBody.trim()}
+            className="rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-50"
+          >
+            Añadir
+          </button>
+        </div>
+        {notes.length === 0 ? (
+          <p className="text-sm text-neutral-500">Sin notas todavía.</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {notes.map((n) => (
+              <li key={n.id} className="rounded-lg bg-[#0b1020] p-2 text-sm">
+                <p className="whitespace-pre-wrap text-neutral-200">{n.body}</p>
+                <p className="mt-0.5 text-xs text-neutral-500">
+                  {n.author ?? "anónimo"} · {n.created_at.slice(0, 16).replace("T", " ")}
+                </p>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 

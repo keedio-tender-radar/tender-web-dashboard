@@ -29,7 +29,7 @@ function freshness(iso: string | null): string {
 
 function Card({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+    <div className="card">
       <p className="text-xs uppercase tracking-wide text-neutral-500">{label}</p>
       <p className="mt-1 text-2xl font-bold">{value}</p>
     </div>
@@ -59,7 +59,7 @@ export default function StatusPage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="card">
           <h2 className="mb-2 font-semibold">Frescura del pipeline</h2>
           <p className="text-sm text-neutral-300">
             {freshness(stats.last_ingested_at)} Última ingesta:{" "}
@@ -77,7 +77,7 @@ export default function StatusPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="card">
           <h2 className="mb-2 font-semibold">Por fuente</h2>
           {Object.entries(stats.by_source).map(([k, v]) => (
             <div key={k} className="flex justify-between text-sm">
@@ -88,7 +88,7 @@ export default function StatusPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+      <div className="card">
         <h2 className="mb-2 font-semibold">Pipeline diario (cron)</h2>
         <ul className="flex flex-col gap-1 text-sm">
           {PIPELINE.map(([t, d]) => (
