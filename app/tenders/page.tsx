@@ -15,6 +15,9 @@ export default function TendersPage() {
   const [order, setOrder] = useState("recent");
   const [light, setLight] = useState("");
   const [minScore, setMinScore] = useState("");
+  const [source, setSource] = useState("");
+  const [bodySearch, setBodySearch] = useState("");
+  const [body, setBody] = useState(""); // órgano aplicado (debounced)
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,8 +31,14 @@ export default function TendersPage() {
     return () => clearTimeout(t);
   }, [search]);
 
+  // debounce del órgano
+  useEffect(() => {
+    const t = setTimeout(() => setBody(bodySearch.trim()), 350);
+    return () => clearTimeout(t);
+  }, [bodySearch]);
+
   // resetea la página al cambiar filtros u orden
-  useEffect(() => setPage(0), [status, order, light, minScore]);
+  useEffect(() => setPage(0), [status, order, light, minScore, source, body]);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -42,13 +51,15 @@ export default function TendersPage() {
         order,
         traffic_light: light || undefined,
         min_score: minScore ? Number(minScore) : undefined,
+        source: source || undefined,
+        contracting_body: body || undefined,
         limit: PAGE_SIZE + 1,
         offset: page * PAGE_SIZE,
       })
       .then(setTenders)
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
-  }, [status, q, order, light, minScore, page]);
+  }, [status, q, order, light, minScore, source, body, page]);
 
   useEffect(load, [load]);
 
@@ -107,6 +118,21 @@ export default function TendersPage() {
           <option value="70">≥ 70</option>
           <option value="85">≥ 85</option>
         </select>
+        <select
+          value={source}
+          onChange={(e) => setSource(e.target.value)}
+          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+        >
+          <option value="">Fuente</option>
+          <option value="placsp">PLACSP</option>
+          <option value="ted">TED</option>
+        </select>
+        <input
+          value={bodySearch}
+          onChange={(e) => setBodySearch(e.target.value)}
+          placeholder="Órgano…"
+          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+        />
         <a
           href={api.exportCsvUrl({ status: status || undefined, q: q || undefined })}
           className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"

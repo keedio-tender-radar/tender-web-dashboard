@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { trafficLight, type TenderWithScore } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
+import { cpvLabel } from "@/lib/cpv";
 
 function money(amount: number | null, currency = "EUR"): string {
   if (amount == null) return "s/d";
@@ -24,7 +25,16 @@ export function TenderCard({ item }: { item: TenderWithScore }) {
         {t.deadline ? ` · cierre ${t.deadline.slice(0, 10)}` : ""}
         {t.buyer ? ` · ${t.buyer}` : ""}
       </p>
-      <p className="mt-1 flex items-center justify-between text-xs uppercase tracking-wide text-neutral-500">
+      {t.cpv.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {t.cpv.slice(0, 2).map((c) => (
+            <span key={c} className="rounded bg-[#0b1020] px-1.5 py-0.5 text-[11px] text-neutral-400">
+              {cpvLabel(c)}
+            </span>
+          ))}
+        </div>
+      )}
+      <p className="mt-2 flex items-center justify-between text-xs uppercase tracking-wide text-neutral-500">
         <span>
           {t.source} · {t.status}
         </span>
