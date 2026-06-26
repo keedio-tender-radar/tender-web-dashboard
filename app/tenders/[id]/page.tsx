@@ -18,6 +18,7 @@ import {
   type Workspace,
 } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
+import { ScoreBreakdownBars } from "@/components/ScoreBreakdownBars";
 import { cpvLabel } from "@/lib/cpv";
 import { toast } from "@/components/Toaster";
 
@@ -264,14 +265,12 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
 
       {score && (
         <div className="card">
-          <h2 className="mb-2 font-semibold">Scoring Go/No-Go</h2>
-          <div className="mb-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-3">
-            {Object.entries(score.breakdown).map(([k, v]) => (
-              <div key={k} className="flex justify-between gap-2">
-                <span className="text-neutral-400">{k.replace(/_/g, " ")}</span>
-                <span className="font-medium">{v}</span>
-              </div>
-            ))}
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-semibold">Scoring Go/No-Go</h2>
+            <span className="text-sm text-neutral-400">{score.total}/100</span>
+          </div>
+          <div className="mb-3">
+            <ScoreBreakdownBars breakdown={score.breakdown} />
           </div>
           <ul className="flex flex-col gap-1 text-sm">
             {score.factors.map((f, i) => (
