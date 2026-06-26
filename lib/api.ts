@@ -40,9 +40,11 @@ export interface TenderWithScore {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
-  // Reintentos ante fallo de red (el API puede estar arrancando en frío: scale-to-zero).
+  // Reintentos ante fallo de red: cubre arranque en frío (scale-to-zero) y reinicios por deploy
+  // de la API. Presupuesto ~25s (1.5+3+4.5+6+7.5).
+  const MAX_ATTEMPTS = 6;
   let lastErr: unknown;
-  for (let attempt = 0; attempt < 4; attempt++) {
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     try {
       const res = await fetch(`${API_URL}${path}`, {
         headers: { "Content-Type": "application/json" },
@@ -55,7 +57,7 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
       lastErr = e;
       // Solo reintenta errores de red (TypeError: Failed to fetch), no errores HTTP.
       if (e instanceof Error && e.message.startsWith("API ")) throw e;
-      if (attempt < 3) await sleep(1200 * (attempt + 1));
+      if (attempt < MAX_ATTEMPTS - 1) await sleep(1500 * (attempt + 1));
     }
   }
   throw new Error(
