@@ -107,6 +107,14 @@ export interface Profile {
   areas: string[];
 }
 
+export interface Duplicate {
+  id: string;
+  source: string;
+  source_id: string;
+  url: string | null;
+  title: string;
+}
+
 export interface Analysis {
   summary: string | null;
   factors: ScoreFactor[];
@@ -216,6 +224,7 @@ export const api = {
   updateProfile: (body: Profile) =>
     req<Profile>("/api/profile", { method: "PUT", body: JSON.stringify(body) }),
   getAnalysis: (id: string) => req<Analysis>(`/api/tenders/${id}/analysis`),
+  getDuplicates: (id: string) => req<Duplicate[]>(`/api/tenders/${id}/duplicates`),
   packageMdUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.md`,
   authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
   authCheck: (password: string) =>

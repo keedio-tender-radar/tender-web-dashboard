@@ -7,6 +7,7 @@ import {
   trafficLight,
   type Analysis,
   type AskAnswer,
+  type Duplicate,
   type Extraction,
   type GeneratedDoc,
   type LearningInsights,
@@ -49,6 +50,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [generating, setGenerating] = useState(false);
   const [pkg, setPkg] = useState<SubmissionPackage | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [duplicates, setDuplicates] = useState<Duplicate[]>([]);
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -60,6 +62,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
     api.learningInsights(id).then(setInsights).catch(() => setInsights(null));
     api.generatedDocuments(id).then(setDrafts).catch(() => setDrafts([]));
     api.getAnalysis(id).then(setAnalysis).catch(() => setAnalysis(null));
+    api.getDuplicates(id).then(setDuplicates).catch(() => setDuplicates([]));
   }
 
   useEffect(load, [id]);
@@ -209,6 +212,23 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           <a href={tender.url} target="_blank" rel="noreferrer" className="text-brand">
             Anuncio original →
           </a>
+        )}
+        {duplicates.length > 0 && (
+          <span className="text-neutral-400">
+            También publicada en:{" "}
+            {duplicates.map((d, i) => (
+              <span key={d.id}>
+                {i > 0 && " · "}
+                {d.url ? (
+                  <a href={d.url} target="_blank" rel="noreferrer" className="text-brand uppercase">
+                    {d.source}
+                  </a>
+                ) : (
+                  <span className="uppercase">{d.source}</span>
+                )}
+              </span>
+            ))}
+          </span>
         )}
       </div>
 
