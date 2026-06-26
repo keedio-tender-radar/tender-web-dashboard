@@ -15,6 +15,7 @@ import {
   type Workspace,
 } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
+import { cpvLabel } from "@/lib/cpv";
 
 const DECISIONS = ["GO", "NO_GO", "REVISAR", "PARTNER", "PRESENTADA", "DESCARTAR"];
 const OUTCOMES = ["pendiente", "presentada", "no_presentada", "ganada", "perdida"];
@@ -192,7 +193,15 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             : "s/d"}
         </span>
         <span>Plazo: {tender.deadline ? tender.deadline.slice(0, 10) : "s/d"}</span>
-        {tender.cpv.length > 0 && <span>CPV: {tender.cpv.join(", ")}</span>}
+        {tender.cpv.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {tender.cpv.map((c) => (
+              <span key={c} className="rounded bg-[#0b1020] px-2 py-0.5 text-xs text-neutral-300">
+                {cpvLabel(c)}
+              </span>
+            ))}
+          </div>
+        )}
         {tender.url && (
           <a href={tender.url} target="_blank" rel="noreferrer" className="text-brand">
             Anuncio original →
