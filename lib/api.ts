@@ -37,14 +37,30 @@ export interface TenderWithScore {
   score: TenderScore | null;
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    cache: "no-store",
-    ...init,
-  });
-  if (!res.ok) throw new Error(`API ${res.status}: ${await res.text()}`);
-  return res.json() as Promise<T>;
+  // Reintentos ante fallo de red (el API puede estar arrancando en frío: scale-to-zero).
+  let lastErr: unknown;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    try {
+      const res = await fetch(`${API_URL}${path}`, {
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        ...init,
+      });
+      if (!res.ok) throw new Error(`API ${res.status}: ${await res.text()}`);
+      return res.json() as Promise<T>;
+    } catch (e) {
+      lastErr = e;
+      // Solo reintenta errores de red (TypeError: Failed to fetch), no errores HTTP.
+      if (e instanceof Error && e.message.startsWith("API ")) throw e;
+      if (attempt < 3) await sleep(1200 * (attempt + 1));
+    }
+  }
+  throw new Error(
+    `No se pudo conectar con la API (${API_URL}). El servicio puede estar arrancando; reintenta en unos segundos. ${lastErr}`,
+  );
 }
 
 export interface ListParams {
