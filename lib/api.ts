@@ -123,6 +123,14 @@ export interface Profile {
   areas: string[];
 }
 
+export interface ActivityEvent {
+  kind: "action" | "decision" | "note";
+  at: string;
+  text: string;
+  actor: string | null;
+  detail: string | null;
+}
+
 export interface Note {
   id: string;
   author: string | null;
@@ -273,6 +281,7 @@ export const api = {
     req<Profile>("/api/profile", { method: "PUT", body: JSON.stringify(body) }),
   getAnalysis: (id: string) => req<Analysis>(`/api/tenders/${id}/analysis`),
   getDuplicates: (id: string) => req<Duplicate[]>(`/api/tenders/${id}/duplicates`),
+  getActivity: (id: string) => req<ActivityEvent[]>(`/api/tenders/${id}/activity`),
   getNotes: (id: string) => req<Note[]>(`/api/tenders/${id}/notes`),
   addNote: (id: string, body: string, author?: string) =>
     req<Note>(`/api/tenders/${id}/notes`, {

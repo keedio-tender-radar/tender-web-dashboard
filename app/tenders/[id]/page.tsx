@@ -5,6 +5,7 @@ import { use, useEffect, useState } from "react";
 import {
   api,
   trafficLight,
+  type ActivityEvent,
   type Analysis,
   type AskAnswer,
   type Duplicate,
@@ -55,6 +56,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [duplicates, setDuplicates] = useState<Duplicate[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [noteBody, setNoteBody] = useState("");
+  const [activity, setActivity] = useState<ActivityEvent[]>([]);
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -68,6 +70,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
     api.getAnalysis(id).then(setAnalysis).catch(() => setAnalysis(null));
     api.getDuplicates(id).then(setDuplicates).catch(() => setDuplicates([]));
     api.getNotes(id).then(setNotes).catch(() => setNotes([]));
+    api.getActivity(id).then(setActivity).catch(() => setActivity([]));
   }
 
   async function addNote() {
@@ -76,6 +79,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       await api.addNote(id, noteBody.trim(), "equipo");
       setNoteBody("");
       setNotes(await api.getNotes(id));
+      api.getActivity(id).then(setActivity).catch(() => {});
     } catch (e) {
       setError(String(e));
     }
@@ -107,6 +111,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       toast(`Decisión registrada: ${decision}/${outcome}`);
       setReason("");
       api.learningInsights(id).then(setInsights).catch(() => {});
+      api.getActivity(id).then(setActivity).catch(() => {});
     } catch (e) {
       setError(String(e));
     }
@@ -563,6 +568,29 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           </ul>
         )}
       </div>
+
+      {activity.length > 0 && (
+        <div className="card">
+          <h2 className="mb-2 font-semibold">Historial</h2>
+          <ul className="flex flex-col gap-2 text-sm">
+            {activity.map((e, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="shrink-0">
+                  {e.kind === "decision" ? "⚖️" : e.kind === "note" ? "📝" : "•"}
+                </span>
+                <div className="min-w-0">
+                  <span className="text-neutral-200">{e.text}</span>
+                  {e.detail && <span className="text-neutral-400"> — {e.detail}</span>}
+                  <span className="ml-1 text-xs text-neutral-500">
+                    {e.actor ? `${e.actor} · ` : ""}
+                    {e.at.slice(0, 16).replace("T", " ")}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2">
         {ACTIONS.map((a) => (
