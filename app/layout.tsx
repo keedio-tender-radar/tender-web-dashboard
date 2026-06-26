@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import "./globals.css";
+import { AuthGate } from "@/components/AuthGate";
 
 export const metadata: Metadata = {
   title: "Keedio Tender Radar",
@@ -37,7 +38,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
           </nav>
         </header>
-        <main className="mx-auto max-w-5xl px-5 py-8">{children}</main>
+        <main className="mx-auto max-w-5xl px-5 py-8">
+          <AuthGate>{children}</AuthGate>
+        </main>
       </body>
     </html>
   );

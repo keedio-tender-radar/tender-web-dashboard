@@ -5,6 +5,7 @@ import { use, useEffect, useState } from "react";
 import {
   api,
   trafficLight,
+  type Analysis,
   type AskAnswer,
   type Extraction,
   type GeneratedDoc,
@@ -47,6 +48,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [drafts, setDrafts] = useState<GeneratedDoc[]>([]);
   const [generating, setGenerating] = useState(false);
   const [pkg, setPkg] = useState<SubmissionPackage | null>(null);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -57,6 +59,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       .catch((e) => setError(String(e)));
     api.learningInsights(id).then(setInsights).catch(() => setInsights(null));
     api.generatedDocuments(id).then(setDrafts).catch(() => setDrafts([]));
+    api.getAnalysis(id).then(setAnalysis).catch(() => setAnalysis(null));
   }
 
   useEffect(load, [id]);
@@ -210,6 +213,16 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       </div>
 
       {tender.summary && <p className="text-neutral-200">{tender.summary}</p>}
+
+      {analysis?.summary && (
+        <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+          <h2 className="mb-1 font-semibold">Análisis IA</h2>
+          <p className="whitespace-pre-wrap text-sm text-neutral-200">{analysis.summary}</p>
+          {analysis.model_version && (
+            <p className="mt-1 text-xs text-neutral-500">modelo: {analysis.model_version}</p>
+          )}
+        </div>
+      )}
 
       {score && (
         <div className="rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
@@ -409,6 +422,14 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             >
               {generating ? "…" : "📦 Preparar paquete"}
             </button>
+            {drafts.length > 0 && (
+              <a
+                href={api.packageMdUrl(id)}
+                className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+              >
+                ⬇ Descargar (.md)
+              </a>
+            )}
           </div>
         </div>
         {workspace && (

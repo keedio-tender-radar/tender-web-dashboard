@@ -107,6 +107,13 @@ export interface Profile {
   areas: string[];
 }
 
+export interface Analysis {
+  summary: string | null;
+  factors: ScoreFactor[];
+  recommendation: string | null;
+  model_version?: string;
+}
+
 export interface GeneratedDoc {
   id: string;
   kind: string;
@@ -208,6 +215,14 @@ export const api = {
   getProfile: () => req<Profile>("/api/profile"),
   updateProfile: (body: Profile) =>
     req<Profile>("/api/profile", { method: "PUT", body: JSON.stringify(body) }),
+  getAnalysis: (id: string) => req<Analysis>(`/api/tenders/${id}/analysis`),
+  packageMdUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.md`,
+  authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
+  authCheck: (password: string) =>
+    req<{ ok: boolean }>("/api/auth/check", {
+      method: "POST",
+      body: JSON.stringify({ password }),
+    }),
   top: (limit = 10) => req<TenderWithScore[]>(`/api/tenders/top?limit=${limit}`),
   urgent: (days = 7) => req<TenderWithScore[]>(`/api/tenders/urgent?days=${days}`),
   getTender: (id: string) => req<Tender>(`/api/tenders/${id}`),
