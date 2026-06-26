@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 
-import { api, type Stats } from "@/lib/api";
+import Link from "next/link";
+
+import { api, type DailySnapshot, type Stats } from "@/lib/api";
 import { SkeletonStats } from "@/components/Skeleton";
 
 const PIPELINE = [
@@ -39,10 +41,12 @@ function Card({ label, value }: { label: string; value: string | number }) {
 
 export default function StatusPage() {
   const [stats, setStats] = useState<Stats | null>(null);
+  const [snapshot, setSnapshot] = useState<DailySnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     api.stats().then(setStats).catch((e) => setError(String(e)));
+    api.dailySnapshot().then(setSnapshot).catch(() => setSnapshot(null));
   }, []);
 
   if (error) return <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>;
@@ -106,6 +110,37 @@ export default function StatusPage() {
           ))}
         </ul>
       </div>
+
+      {snapshot && snapshot.date && (
+        <div className="card">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="font-semibold">
+              Foto diaria #{snapshot.number}{" "}
+              <span className="text-sm font-normal text-neutral-500">
+                · {snapshot.date} · {snapshot.count} activas
+              </span>
+            </h2>
+          </div>
+          <ol className="flex flex-col gap-1 text-sm">
+            {snapshot.items.slice(0, 10).map((it, i) => (
+              <li key={it.tender_id} className="flex items-center gap-2">
+                <span className="w-5 shrink-0 text-neutral-500">{i + 1}.</span>
+                <span>{it.traffic_light_label.split(" ")[0]}</span>
+                <Link href={`/tenders/${it.tender_id}`} className="grow truncate hover:text-brand">
+                  {it.title}
+                </Link>
+                <span className="shrink-0 text-neutral-400">
+                  {it.source} · {it.score}
+                  {it.days_remaining != null ? ` · ${it.days_remaining}d` : ""}
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-2 text-xs text-neutral-500">
+            Misma foto que reciben Telegram y la web cada día.
+          </p>
+        </div>
+      )}
     </section>
   );
 }

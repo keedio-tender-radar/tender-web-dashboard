@@ -130,6 +130,25 @@ export interface Note {
   created_at: string;
 }
 
+export interface SnapshotItem {
+  tender_id: string;
+  title: string;
+  source: string;
+  score: number;
+  recommendation: string;
+  traffic_light: string;
+  traffic_light_label: string;
+  deadline: string | null;
+  days_remaining: number | null;
+}
+
+export interface DailySnapshot {
+  date: string | null;
+  number: number;
+  count: number;
+  items: SnapshotItem[];
+}
+
 export interface MarketStats {
   top_buyers: Record<string, number>;
   by_month: Record<string, number>;
@@ -261,6 +280,7 @@ export const api = {
       body: JSON.stringify({ body, author }),
     }),
   marketStats: () => req<MarketStats>("/api/tenders/stats/market"),
+  dailySnapshot: () => req<DailySnapshot>("/api/tenders/daily-snapshot"),
   packageMdUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.md`,
   authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
   authCheck: (password: string) =>
