@@ -9,6 +9,7 @@ import {
   type Extraction,
   type GeneratedDoc,
   type LearningInsights,
+  type SubmissionPackage,
   type Tender,
   type TenderScore,
   type Workspace,
@@ -44,6 +45,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [drafts, setDrafts] = useState<GeneratedDoc[]>([]);
   const [generating, setGenerating] = useState(false);
+  const [pkg, setPkg] = useState<SubmissionPackage | null>(null);
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -138,6 +140,22 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       load();
     } catch (e) {
       setError(String(e));
+    }
+  }
+
+  async function doPreparePackage() {
+    setGenerating(true);
+    setMsg(null);
+    try {
+      const p = await api.prepareSubmissionPackage(id);
+      setPkg(p);
+      setDrafts(await api.generatedDocuments(id));
+      setMsg(`Paquete preparado: ${p.documents} documento(s).`);
+      load();
+    } catch (e) {
+      setError(String(e));
+    } finally {
+      setGenerating(false);
     }
   }
 
@@ -373,7 +391,14 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
               disabled={generating}
               className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
             >
-              {generating ? "Generando…" : "📝 Generar borradores"}
+              {generating ? "…" : "📝 Generar borradores"}
+            </button>
+            <button
+              onClick={doPreparePackage}
+              disabled={generating}
+              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+            >
+              {generating ? "…" : "📦 Preparar paquete"}
             </button>
           </div>
         </div>
@@ -414,6 +439,26 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
                 </pre>
               </details>
             ))}
+          </div>
+        )}
+        {pkg && (
+          <div className="flex flex-col gap-2 border-t border-neutral-800 pt-3 text-sm">
+            <p className="text-neutral-300">
+              📦 Paquete de presentación · {pkg.documents} documento(s)
+            </p>
+            <details>
+              <summary className="cursor-pointer text-neutral-200">Manifiesto del expediente</summary>
+              <pre className="mt-1 overflow-x-auto whitespace-pre-wrap rounded bg-[#0b1020] p-2 text-xs text-neutral-300">
+                {pkg.manifest_md}
+              </pre>
+            </details>
+            <p className="text-neutral-400">Pendiente (revisión humana):</p>
+            <ul className="list-inside list-disc text-neutral-300">
+              {pkg.pending_human.map((p) => (
+                <li key={p}>{p}</li>
+              ))}
+            </ul>
+            <p className="text-xs text-neutral-500">{pkg.note}</p>
           </div>
         )}
       </div>

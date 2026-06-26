@@ -107,6 +107,17 @@ export interface GeneratedDoc {
   generated_by: string;
 }
 
+export interface SubmissionPackage {
+  tender_id: string;
+  workspace: string;
+  package: Record<string, string[]>;
+  documents: number;
+  required_documents: string[];
+  pending_human: string[];
+  manifest_md: string;
+  note: string;
+}
+
 // Semáforo client-side (réplica de services/semaphore.py) para no llamar N veces a la API.
 export function trafficLight(score: TenderScore | null, deadline: string | null): {
   light: TrafficLight;
@@ -182,6 +193,8 @@ export const api = {
     req<{ count: number }>(`/api/tenders/${id}/generate-offer-drafts`, { method: "POST" }),
   generatedDocuments: (id: string) =>
     req<GeneratedDoc[]>(`/api/tenders/${id}/generated-documents`),
+  prepareSubmissionPackage: (id: string) =>
+    req<SubmissionPackage>(`/api/tenders/${id}/prepare-submission-package`, { method: "POST" }),
   top: (limit = 10) => req<TenderWithScore[]>(`/api/tenders/top?limit=${limit}`),
   urgent: (days = 7) => req<TenderWithScore[]>(`/api/tenders/urgent?days=${days}`),
   getTender: (id: string) => req<Tender>(`/api/tenders/${id}`),
