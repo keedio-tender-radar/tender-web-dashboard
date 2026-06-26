@@ -99,6 +99,14 @@ export interface Workspace {
   note: string;
 }
 
+export interface Profile {
+  keywords_positive: string[];
+  keywords_negative: string[];
+  cpv_preferred: string[];
+  cpv_excluded: string[];
+  areas: string[];
+}
+
 export interface GeneratedDoc {
   id: string;
   kind: string;
@@ -195,6 +203,9 @@ export const api = {
     req<GeneratedDoc[]>(`/api/tenders/${id}/generated-documents`),
   prepareSubmissionPackage: (id: string) =>
     req<SubmissionPackage>(`/api/tenders/${id}/prepare-submission-package`, { method: "POST" }),
+  getProfile: () => req<Profile>("/api/profile"),
+  updateProfile: (body: Profile) =>
+    req<Profile>("/api/profile", { method: "PUT", body: JSON.stringify(body) }),
   top: (limit = 10) => req<TenderWithScore[]>(`/api/tenders/top?limit=${limit}`),
   urgent: (days = 7) => req<TenderWithScore[]>(`/api/tenders/urgent?days=${days}`),
   getTender: (id: string) => req<Tender>(`/api/tenders/${id}`),
