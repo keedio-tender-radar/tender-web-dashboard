@@ -23,6 +23,32 @@ export default function TendersPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Hidrata los filtros desde la URL al montar (vistas compartibles/recargables).
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get("status")) setStatus(p.get("status")!);
+    if (p.get("q")) setSearch(p.get("q")!);
+    if (p.get("order")) setOrder(p.get("order")!);
+    if (p.get("light")) setLight(p.get("light")!);
+    if (p.get("min_score")) setMinScore(p.get("min_score")!);
+    if (p.get("source")) setSource(p.get("source")!);
+    if (p.get("body")) setBodySearch(p.get("body")!);
+  }, []);
+
+  // Refleja los filtros aplicados en la URL (sin recargar).
+  useEffect(() => {
+    const p = new URLSearchParams();
+    if (status) p.set("status", status);
+    if (q) p.set("q", q);
+    if (order !== "recent") p.set("order", order);
+    if (light) p.set("light", light);
+    if (minScore) p.set("min_score", minScore);
+    if (source) p.set("source", source);
+    if (body) p.set("body", body);
+    const qs = p.toString();
+    window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
+  }, [status, q, order, light, minScore, source, body]);
+
   // debounce de la búsqueda
   useEffect(() => {
     const t = setTimeout(() => {

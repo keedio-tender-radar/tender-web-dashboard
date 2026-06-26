@@ -40,12 +40,20 @@ export default function MarketPage() {
 
   return (
     <section className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold">Inteligencia de mercado</h1>
-        <p className="text-neutral-400">
-          Visión agregada del pipeline de contratación detectado. {stats.scored_count} licitaciones
-          puntuadas · score medio {stats.avg_score}/100.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">Inteligencia de mercado</h1>
+          <p className="text-neutral-400">
+            Visión agregada del pipeline de contratación detectado. {stats.scored_count}{" "}
+            licitaciones puntuadas · score medio {stats.avg_score}/100.
+          </p>
+        </div>
+        <a
+          href={api.marketCsvUrl()}
+          className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+        >
+          ⬇ CSV
+        </a>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">

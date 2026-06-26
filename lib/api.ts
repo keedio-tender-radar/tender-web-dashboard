@@ -292,6 +292,11 @@ export const api = {
     }),
   marketStats: () => req<MarketStats>("/api/tenders/stats/market"),
   dailySnapshot: () => req<DailySnapshot>("/api/tenders/daily-snapshot"),
+  dailySnapshots: (limit = 14) =>
+    req<{ date: string; count: number; items: SnapshotItem[] }[]>(
+      `/api/tenders/daily-snapshots?limit=${limit}`,
+    ),
+  marketCsvUrl: () => `${API_URL}/api/tenders/stats/market.csv`,
   packageMdUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.md`,
   authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
   authCheck: (password: string) =>

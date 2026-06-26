@@ -42,12 +42,22 @@ function Card({ label, value }: { label: string; value: string | number }) {
 export default function StatusPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [snapshot, setSnapshot] = useState<DailySnapshot | null>(null);
+  const [history, setHistory] = useState<{ date: string; count: number; items: { tender_id: string }[] }[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     api.stats().then(setStats).catch((e) => setError(String(e)));
     api.dailySnapshot().then(setSnapshot).catch(() => setSnapshot(null));
+    api.dailySnapshots(14).then(setHistory).catch(() => setHistory([]));
   }, []);
+
+  // Novedades: tenders en la foto de hoy que no estaban en la anterior.
+  const newToday =
+    history.length >= 2
+      ? history[0].items.filter(
+          (i) => !history[1].items.some((j) => j.tender_id === i.tender_id),
+        ).length
+      : 0;
 
   if (error) return <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>;
   if (!stats)
@@ -139,6 +149,33 @@ export default function StatusPage() {
           <p className="mt-2 text-xs text-neutral-500">
             Misma foto que reciben Telegram y la web cada día.
           </p>
+        </div>
+      )}
+
+      {history.length > 0 && (
+        <div className="card">
+          <h2 className="mb-2 font-semibold">
+            Histórico de fotos{" "}
+            {newToday > 0 && (
+              <span className="text-sm font-normal text-emerald-400">· 🆕 {newToday} nuevas hoy</span>
+            )}
+          </h2>
+          <div className="flex flex-col gap-1 text-sm">
+            {history.map((h) => (
+              <div key={h.date} className="flex items-center gap-3">
+                <span className="w-24 shrink-0 font-mono text-neutral-400">{h.date}</span>
+                <span className="h-2 grow overflow-hidden rounded-full bg-[#0b1020]">
+                  <span
+                    className="block h-full rounded-full bg-brand"
+                    style={{
+                      width: `${Math.min(100, (h.count / Math.max(...history.map((x) => x.count), 1)) * 100)}%`,
+                    }}
+                  />
+                </span>
+                <span className="w-8 text-right tabular-nums text-neutral-300">{h.count}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </section>

@@ -28,7 +28,7 @@ export default function RadarPage() {
   }, []);
 
   return (
-    <section className="flex flex-col gap-8">
+    <section className="flex flex-col gap-8 stagger">
       <div>
         <h1 className="text-2xl font-bold">Radar diario</h1>
         <p className="text-neutral-400">Oportunidades priorizadas por encaje con Keedio.</p>
