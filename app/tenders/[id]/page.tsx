@@ -10,6 +10,7 @@ import {
   type LearningInsights,
   type Tender,
   type TenderScore,
+  type Workspace,
 } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
 
@@ -39,6 +40,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [decision, setDecision] = useState("GO");
   const [outcome, setOutcome] = useState("pendiente");
   const [reason, setReason] = useState("");
+  const [workspace, setWorkspace] = useState<Workspace | null>(null);
 
   function load() {
     Promise.all([api.getTender(id), api.getScore(id)])
@@ -106,6 +108,18 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       setAnswer({ backend: "error", answer: String(e), sources: [] });
     } finally {
       setAsking(false);
+    }
+  }
+
+  async function doMarkInteresting() {
+    setMsg(null);
+    try {
+      const ws = await api.markInteresting(id);
+      setWorkspace(ws);
+      setMsg("Marcada como interesante: expediente creado.");
+      load();
+    } catch (e) {
+      setError(String(e));
     }
   }
 
@@ -324,6 +338,39 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             <p className="text-sm text-neutral-500">Sin precedentes en el histórico.</p>
           )}
         </div>
+      </div>
+
+      <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#141a2e] p-4">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-semibold">Expediente</h2>
+          <button
+            onClick={doMarkInteresting}
+            className="rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark"
+          >
+            ⭐ Interesa → crear expediente
+          </button>
+        </div>
+        {workspace && (
+          <div className="text-sm">
+            <p className="text-neutral-300">
+              Carpeta: <code className="text-neutral-100">{workspace.workspace}</code>
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {workspace.folders.map((f) => (
+                <span key={f} className="rounded bg-[#0b1020] px-2 py-0.5 text-xs text-neutral-300">
+                  📁 {f}
+                </span>
+              ))}
+            </div>
+            <p className="mt-3 text-neutral-400">Documentos a preparar:</p>
+            <ul className="mt-1 list-inside list-disc text-neutral-300">
+              {workspace.required_documents.map((d) => (
+                <li key={d}>{d}</li>
+              ))}
+            </ul>
+            <p className="mt-2 text-xs text-neutral-500">{workspace.note}</p>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap gap-2">
