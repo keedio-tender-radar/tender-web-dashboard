@@ -19,6 +19,7 @@ import {
 } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { cpvLabel } from "@/lib/cpv";
+import { toast } from "@/components/Toaster";
 
 const DECISIONS = ["GO", "NO_GO", "REVISAR", "PARTNER", "PRESENTADA", "DESCARTAR"];
 const OUTCOMES = ["pendiente", "presentada", "no_presentada", "ganada", "perdida"];
@@ -34,7 +35,6 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const { id } = use(params);
   const [tender, setTender] = useState<Tender | null>(null);
   const [score, setScore] = useState<TenderScore | null>(null);
-  const [msg, setMsg] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [extraction, setExtraction] = useState<Extraction | null>(null);
   const [extracting, setExtracting] = useState(false);
@@ -84,10 +84,9 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
 
   async function doGenerateDrafts() {
     setGenerating(true);
-    setMsg(null);
     try {
       const r = await api.generateOfferDrafts(id);
-      setMsg(`Borradores generados: ${r.count}`);
+      toast(`Borradores generados: ${r.count}`);
       setDrafts(await api.generatedDocuments(id));
     } catch (e) {
       setError(String(e));
@@ -97,7 +96,6 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   }
 
   async function saveDecision() {
-    setMsg(null);
     try {
       await api.recordDecision(id, {
         decision,
@@ -105,7 +103,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         reason: reason || undefined,
         final_score: score?.total,
       });
-      setMsg(`Decisión registrada: ${decision}/${outcome}`);
+      toast(`Decisión registrada: ${decision}/${outcome}`);
       setReason("");
       api.learningInsights(id).then(setInsights).catch(() => {});
     } catch (e) {
@@ -132,7 +130,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
     try {
       const newScore = await api.reanalyze(id);
       setScore(newScore);
-      setMsg("Re-analizado con el pliego: score actualizado.");
+      toast("Re-analizado con el pliego: score actualizado.");
     } catch (e) {
       setExtractError(String(e));
     } finally {
@@ -154,11 +152,10 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   }
 
   async function doMarkInteresting() {
-    setMsg(null);
     try {
       const ws = await api.markInteresting(id);
       setWorkspace(ws);
-      setMsg("Marcada como interesante: expediente creado.");
+      toast("Marcada como interesante: expediente creado.");
       load();
     } catch (e) {
       setError(String(e));
@@ -167,12 +164,11 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
 
   async function doPreparePackage() {
     setGenerating(true);
-    setMsg(null);
     try {
       const p = await api.prepareSubmissionPackage(id);
       setPkg(p);
       setDrafts(await api.generatedDocuments(id));
-      setMsg(`Paquete preparado: ${p.documents} documento(s).`);
+      toast(`Paquete preparado: ${p.documents} documento(s).`);
       load();
     } catch (e) {
       setError(String(e));
@@ -182,10 +178,9 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   }
 
   async function act(action: string) {
-    setMsg(null);
     try {
       await api.postAction(id, action);
-      setMsg(`Acción registrada: ${action}`);
+      toast(`Acción registrada: ${action}`);
       load();
     } catch (e) {
       setError(String(e));
@@ -193,7 +188,15 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   }
 
   if (error) return <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>;
-  if (!tender) return <p className="text-neutral-500">Cargando…</p>;
+  if (!tender)
+    return (
+      <section className="flex flex-col gap-4" aria-busy="true" aria-label="Cargando ficha">
+        <div className="skeleton h-7 w-3/4" />
+        <div className="skeleton h-4 w-1/2" />
+        <div className="skeleton h-32 w-full" />
+        <div className="skeleton h-24 w-full" />
+      </section>
+    );
 
   return (
     <section className="flex flex-col gap-5">
@@ -573,7 +576,6 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           </button>
         ))}
       </div>
-      {msg && <p className="text-sm text-green-400">{msg}</p>}
     </section>
   );
 }

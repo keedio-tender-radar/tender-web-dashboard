@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { api, type MarketStats, type Stats } from "@/lib/api";
+import { AreaChart } from "@/components/AreaChart";
 import { BarList } from "@/components/BarList";
 import { SkeletonStats } from "@/components/Skeleton";
 import { cpvLabel } from "@/lib/cpv";
@@ -54,7 +55,7 @@ export default function MarketPage() {
           <BarList title="Top órganos de contratación" data={market.top_buyers} color="bg-sky-500" />
         )}
         {market && Object.keys(market.by_month).length > 0 && (
-          <BarList title="Volumen por mes" data={market.by_month} color="bg-amber-500" />
+          <AreaChart title="Volumen por mes" data={market.by_month} />
         )}
         <BarList
           title="Top CPV"
