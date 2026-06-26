@@ -154,6 +154,8 @@ export interface Stats {
   go_budget_total: number;
   scored_count: number;
   avg_score: number;
+  last_ingested_at: string | null;
+  last_scored_at: string | null;
 }
 
 export const api = {

@@ -32,6 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/profile" className="text-sm text-neutral-400 hover:text-white">
               Perfil
             </Link>
+            <Link href="/status" className="text-sm text-neutral-400 hover:text-white">
+              Estado
+            </Link>
           </nav>
         </header>
         <main className="mx-auto max-w-5xl px-5 py-8">{children}</main>
