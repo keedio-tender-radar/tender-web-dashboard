@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { api, type Stats, type TenderWithScore } from "@/lib/api";
+import { api, type DailySnapshot, type Stats, type TenderWithScore } from "@/lib/api";
 import { StatsPanel } from "@/components/StatsPanel";
 import { TenderCard } from "@/components/TenderCard";
 import { SkeletonGrid, SkeletonStats } from "@/components/Skeleton";
@@ -11,6 +11,7 @@ export default function RadarPage() {
   const [top, setTop] = useState<TenderWithScore[]>([]);
   const [urgent, setUrgent] = useState<TenderWithScore[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [snapshot, setSnapshot] = useState<DailySnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,6 +24,7 @@ export default function RadarPage() {
       })
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
+    api.dailySnapshot().then(setSnapshot).catch(() => setSnapshot(null));
   }, []);
 
   return (
@@ -30,6 +32,11 @@ export default function RadarPage() {
       <div>
         <h1 className="text-2xl font-bold">Radar diario</h1>
         <p className="text-neutral-400">Oportunidades priorizadas por encaje con Keedio.</p>
+        {snapshot?.date && (
+          <p className="mt-1 text-xs text-neutral-500">
+            Foto diaria #{snapshot.number} · {snapshot.date} · {snapshot.count} activas
+          </p>
+        )}
       </div>
 
       {error && (

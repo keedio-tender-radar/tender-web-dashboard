@@ -205,7 +205,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
     );
 
   return (
-    <section className="flex flex-col gap-5">
+    <section className="flex flex-col gap-5 fade-up">
       <div className="flex items-start justify-between gap-4">
         <h1 className="text-2xl font-bold">{tender.title}</h1>
         <div className="flex shrink-0 flex-col items-end gap-1">
