@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { api, type MarketStats, type Stats } from "@/lib/api";
 import { BarList } from "@/components/BarList";
+import { SkeletonStats } from "@/components/Skeleton";
 import { cpvLabel } from "@/lib/cpv";
 
 const REC_LABELS: Record<string, string> = {
@@ -28,7 +29,13 @@ export default function MarketPage() {
   }, []);
 
   if (error) return <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>;
-  if (!stats) return <p className="text-neutral-500">Cargando…</p>;
+  if (!stats)
+    return (
+      <section className="flex flex-col gap-5">
+        <h1 className="text-2xl font-bold">Inteligencia de mercado</h1>
+        <SkeletonStats count={4} />
+      </section>
+    );
 
   return (
     <section className="flex flex-col gap-6">

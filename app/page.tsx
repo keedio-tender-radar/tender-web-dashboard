@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { api, type Stats, type TenderWithScore } from "@/lib/api";
 import { StatsPanel } from "@/components/StatsPanel";
 import { TenderCard } from "@/components/TenderCard";
+import { SkeletonGrid, SkeletonStats } from "@/components/Skeleton";
 
 export default function RadarPage() {
   const [top, setTop] = useState<TenderWithScore[]>([]);
@@ -31,40 +32,49 @@ export default function RadarPage() {
         <p className="text-neutral-400">Oportunidades priorizadas por encaje con Keedio.</p>
       </div>
 
-      {loading && <p className="text-neutral-500">Cargando…</p>}
       {error && (
         <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">
           No se pudo conectar con la API ({api.apiUrl}). {error}
         </p>
       )}
 
-      {stats && <StatsPanel stats={stats} />}
+      {loading ? (
+        <>
+          <SkeletonStats />
+          <SkeletonGrid count={4} />
+        </>
+      ) : (
+        <>
+          {stats && <StatsPanel stats={stats} />}
 
-      {urgent.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-lg font-semibold">🚨 Urgentes (cierre próximo)</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {urgent.map((it) => (
-              <TenderCard key={it.tender.id} item={it} />
-            ))}
+          {urgent.length > 0 && (
+            <div className="fade-up">
+              <h2 className="mb-3 text-lg font-semibold">🚨 Urgentes (cierre próximo)</h2>
+              <div className="grid gap-3 stagger sm:grid-cols-2">
+                {urgent.map((it) => (
+                  <TenderCard key={it.tender.id} item={it} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="fade-up">
+            <h2 className="mb-3 text-lg font-semibold">⭐ Top oportunidades</h2>
+            {top.length === 0 ? (
+              <p className="text-neutral-500">
+                Aún no hay licitaciones puntuadas. Ejecuta la ingesta y el análisis para poblar el
+                radar.
+              </p>
+            ) : (
+              <div className="grid gap-3 stagger sm:grid-cols-2">
+                {top.map((it) => (
+                  <TenderCard key={it.tender.id} item={it} />
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        </>
       )}
-
-      <div>
-        <h2 className="mb-3 text-lg font-semibold">⭐ Top oportunidades</h2>
-        {!loading && top.length === 0 ? (
-          <p className="text-neutral-500">
-            Aún no hay licitaciones puntuadas. Ejecuta la ingesta y el análisis para poblar el radar.
-          </p>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {top.map((it) => (
-              <TenderCard key={it.tender.id} item={it} />
-            ))}
-          </div>
-        )}
-      </div>
     </section>
   );
 }

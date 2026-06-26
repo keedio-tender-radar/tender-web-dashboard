@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { api, type Stats } from "@/lib/api";
+import { SkeletonStats } from "@/components/Skeleton";
 
 const PIPELINE = [
   ["06:00", "Ingesta (PLACSP + TED + portales extra)"],
@@ -45,7 +46,13 @@ export default function StatusPage() {
   }, []);
 
   if (error) return <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>;
-  if (!stats) return <p className="text-neutral-500">Cargando…</p>;
+  if (!stats)
+    return (
+      <section className="flex flex-col gap-5">
+        <h1 className="text-2xl font-bold">Estado del sistema</h1>
+        <SkeletonStats />
+      </section>
+    );
 
   return (
     <section className="flex flex-col gap-5">

@@ -127,4 +127,63 @@
     border-radius: 2px;
     background: var(--brand);
   }
+
+  /* Skeleton de carga */
+  .skeleton {
+    border-radius: 10px;
+    background: linear-gradient(
+      100deg,
+      rgba(148, 163, 196, 0.08) 30%,
+      rgba(148, 163, 196, 0.16) 50%,
+      rgba(148, 163, 196, 0.08) 70%
+    );
+    background-size: 200% 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .skeleton {
+      animation: shimmer 1.4s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Entrada sutil: solo cuando hay movimiento permitido; por defecto el contenido es visible. */
+@media (prefers-reduced-motion: no-preference) {
+  .fade-up {
+    animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .stagger > * {
+    animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .stagger > *:nth-child(2) {
+    animation-delay: 0.05s;
+  }
+  .stagger > *:nth-child(3) {
+    animation-delay: 0.1s;
+  }
+  .stagger > *:nth-child(4) {
+    animation-delay: 0.15s;
+  }
+  .stagger > *:nth-child(n + 5) {
+    animation-delay: 0.2s;
+  }
 }

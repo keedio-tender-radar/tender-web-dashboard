@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { api, type TenderWithScore } from "@/lib/api";
 import { TenderCard } from "@/components/TenderCard";
+import { SkeletonGrid } from "@/components/Skeleton";
 
 const PAGE_SIZE = 8;
 
@@ -143,10 +144,14 @@ export default function TendersPage() {
 
       {error && <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>}
 
-      {!loading && visible.length === 0 ? (
-        <p className="text-neutral-500">No hay licitaciones para este filtro.</p>
+      {loading ? (
+        <SkeletonGrid count={PAGE_SIZE} />
+      ) : visible.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-[var(--border)] p-8 text-center text-neutral-500">
+          No hay licitaciones para este filtro. Prueba a relajar los filtros o la búsqueda.
+        </p>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 stagger sm:grid-cols-2">
           {visible.map((it) => (
             <TenderCard key={it.tender.id} item={it} />
           ))}
