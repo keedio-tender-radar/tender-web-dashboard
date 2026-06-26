@@ -24,6 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/tenders" className="text-sm text-neutral-400 hover:text-white">
               Licitaciones
             </Link>
+            <Link href="/seguimiento" className="text-sm text-neutral-400 hover:text-white">
+              Seguimiento
+            </Link>
             <Link href="/market" className="text-sm text-neutral-400 hover:text-white">
               Mercado
             </Link>
