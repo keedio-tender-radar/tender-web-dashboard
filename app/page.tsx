@@ -6,6 +6,7 @@ import { api, type DailySnapshot, type Stats, type TenderWithScore } from "@/lib
 import { StatsPanel } from "@/components/StatsPanel";
 import { TenderCard } from "@/components/TenderCard";
 import { SkeletonGrid, SkeletonStats } from "@/components/Skeleton";
+import { SemaphoreLegend } from "@/components/SemaphoreLegend";
 
 export default function RadarPage() {
   const [top, setTop] = useState<TenderWithScore[]>([]);
@@ -37,6 +38,9 @@ export default function RadarPage() {
             Foto diaria #{snapshot.number} · {snapshot.date} · {snapshot.count} activas
           </p>
         )}
+        <div className="mt-2">
+          <SemaphoreLegend />
+        </div>
       </div>
 
       {error && (

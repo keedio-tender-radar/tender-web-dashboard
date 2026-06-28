@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { api, type TenderWithScore } from "@/lib/api";
 import { TenderCard } from "@/components/TenderCard";
@@ -23,6 +23,20 @@ export default function TendersPage() {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  // Atajo "/" para enfocar la búsqueda (si no se está escribiendo en otro campo).
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (e.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA") {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   // Hidrata los filtros desde la URL al montar (vistas compartibles/recargables).
   useEffect(() => {
@@ -143,9 +157,10 @@ export default function TendersPage() {
 
       <div className="flex flex-wrap items-center gap-2">
         <input
+          ref={searchRef}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por título…"
+          placeholder="Buscar por título…  ( / )"
           aria-label="Buscar por título"
           className="grow rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
         />
