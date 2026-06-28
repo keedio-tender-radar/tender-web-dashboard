@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api, type TenderWithScore } from "@/lib/api";
 import { TenderCard } from "@/components/TenderCard";
 import { SkeletonGrid } from "@/components/Skeleton";
+import { toast } from "@/components/Toaster";
 
 const PAGE_SIZE = 8;
 
@@ -92,10 +93,43 @@ export default function TendersPage() {
 
   const hasNext = tenders.length > PAGE_SIZE;
   const visible = tenders.slice(0, PAGE_SIZE);
+  const hasFilters = !!(status || search || light || minScore || source || bodySearch || order !== "recent");
+
+  function clearFilters() {
+    setStatus("");
+    setSearch("");
+    setOrder("recent");
+    setLight("");
+    setMinScore("");
+    setSource("");
+    setBodySearch("");
+  }
+
+  function copyLink() {
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => toast("Enlace de la vista copiado"))
+      .catch(() => toast("No se pudo copiar", "error"));
+  }
 
   return (
     <section className="flex flex-col gap-5">
-      <h1 className="text-2xl font-bold">Licitaciones</h1>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold">Licitaciones</h1>
+        <div className="flex items-center gap-2 text-sm">
+          {hasFilters && (
+            <button onClick={clearFilters} className="text-neutral-400 hover:text-white">
+              Limpiar filtros
+            </button>
+          )}
+          <button
+            onClick={copyLink}
+            className="rounded-lg border border-[var(--border)] px-2.5 py-1 hover:border-brand"
+          >
+            🔗 Copiar enlace
+          </button>
+        </div>
+      </div>
 
       <div className="flex flex-wrap items-center gap-2">
         <input
@@ -176,6 +210,14 @@ export default function TendersPage() {
       </div>
 
       {error && <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>}
+
+      {!loading && (
+        <p className="text-sm text-neutral-500">
+          {visible.length === 0
+            ? "Sin resultados"
+            : `${visible.length} resultado(s)${hasNext ? "+" : ""} · página ${page + 1}`}
+        </p>
+      )}
 
       {loading ? (
         <SkeletonGrid count={PAGE_SIZE} />
