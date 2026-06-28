@@ -123,6 +123,8 @@ export interface Profile {
   cpv_preferred: string[];
   cpv_excluded: string[];
   areas: string[];
+  team: string[];
+  project_months: number;
 }
 
 export interface ActivityEvent {

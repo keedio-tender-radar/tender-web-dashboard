@@ -4,12 +4,21 @@ import { useEffect, useState } from "react";
 
 import { api, type Profile } from "@/lib/api";
 
-const FIELDS: { key: keyof Profile; label: string; hint: string }[] = [
+type ListKey =
+  | "keywords_positive"
+  | "keywords_negative"
+  | "cpv_preferred"
+  | "cpv_excluded"
+  | "areas"
+  | "team";
+
+const FIELDS: { key: ListKey; label: string; hint: string }[] = [
   { key: "keywords_positive", label: "Keywords positivas", hint: "encaje técnico (suben el score)" },
   { key: "keywords_negative", label: "Keywords negativas", hint: "descartan (bajan el score)" },
   { key: "cpv_preferred", label: "CPV preferidos", hint: "prefijos, p. ej. 72, 48" },
   { key: "cpv_excluded", label: "CPV excluidos", hint: "prefijos o códigos a descartar" },
   { key: "areas", label: "Áreas Keedio", hint: "informativo" },
+  { key: "team", label: "Equipo propuesto", hint: "roles para el organigrama de la oferta" },
 ];
 
 export default function ProfilePage() {
@@ -22,7 +31,7 @@ export default function ProfilePage() {
     api.getProfile().then(setProfile).catch((e) => setError(String(e)));
   }, []);
 
-  function setField(key: keyof Profile, value: string) {
+  function setField(key: ListKey, value: string) {
     if (!profile) return;
     setProfile({ ...profile, [key]: value.split(",").map((s) => s.trim()).filter(Boolean) });
   }
@@ -72,6 +81,22 @@ export default function ProfilePage() {
               />
             </div>
           ))}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium">
+              Duración del proyecto (meses){" "}
+              <span className="text-neutral-500">— para el cronograma de la oferta</span>
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={36}
+              value={profile.project_months}
+              onChange={(e) =>
+                setProfile({ ...profile, project_months: Number(e.target.value) || 1 })
+              }
+              className="w-32 rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
+            />
+          </div>
           <button
             onClick={save}
             disabled={saving}
