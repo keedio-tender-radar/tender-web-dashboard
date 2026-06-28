@@ -481,12 +481,26 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
               {generating ? "…" : "📦 Preparar paquete"}
             </button>
             {drafts.length > 0 && (
-              <a
-                href={api.packageMdUrl(id)}
-                className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
-              >
-                ⬇ Descargar (.md)
-              </a>
+              <>
+                <a
+                  href={api.packageDocxUrl(id)}
+                  className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+                >
+                  ⬇ Word
+                </a>
+                <a
+                  href={api.packagePdfUrl(id)}
+                  className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+                >
+                  ⬇ PDF
+                </a>
+                <a
+                  href={api.packageMdUrl(id)}
+                  className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+                >
+                  ⬇ .md
+                </a>
+              </>
             )}
           </div>
         </div>

@@ -298,6 +298,8 @@ export const api = {
     ),
   marketCsvUrl: () => `${API_URL}/api/tenders/stats/market.csv`,
   packageMdUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.md`,
+  packageDocxUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.docx`,
+  packagePdfUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.pdf`,
   authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
   authCheck: (password: string) =>
     req<{ ok: boolean }>("/api/auth/check", {
