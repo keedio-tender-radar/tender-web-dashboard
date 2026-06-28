@@ -162,13 +162,13 @@ export default function TendersPage() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por título…  ( / )"
           aria-label="Buscar por título"
-          className="grow rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+          className="w-full rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm sm:w-auto sm:grow"
         />
         <select
           value={status}
           aria-label="Filtrar por estado"
           onChange={(e) => setStatus(e.target.value)}
-          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+          className="min-w-[120px] flex-1 rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm sm:flex-none"
         >
           <option value="">Todas</option>
           <option value="discovered">Descubiertas</option>
@@ -181,7 +181,7 @@ export default function TendersPage() {
           value={order}
           aria-label="Ordenar"
           onChange={(e) => setOrder(e.target.value)}
-          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+          className="min-w-[120px] flex-1 rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm sm:flex-none"
         >
           <option value="recent">Más recientes</option>
           <option value="score">Mejor score</option>
@@ -190,7 +190,7 @@ export default function TendersPage() {
           value={light}
           aria-label="Filtrar por semáforo"
           onChange={(e) => setLight(e.target.value)}
-          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+          className="min-w-[120px] flex-1 rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm sm:flex-none"
         >
           <option value="">Semáforo</option>
           <option value="green">🟢 Prioritaria</option>
@@ -202,7 +202,7 @@ export default function TendersPage() {
           value={minScore}
           aria-label="Score mínimo"
           onChange={(e) => setMinScore(e.target.value)}
-          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+          className="min-w-[120px] flex-1 rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm sm:flex-none"
         >
           <option value="">Score mín.</option>
           <option value="50">≥ 50</option>
@@ -213,7 +213,7 @@ export default function TendersPage() {
           value={source}
           aria-label="Filtrar por fuente"
           onChange={(e) => setSource(e.target.value)}
-          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+          className="min-w-[120px] flex-1 rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm sm:flex-none"
         >
           <option value="">Fuente</option>
           <option value="placsp">PLACSP</option>
@@ -224,7 +224,7 @@ export default function TendersPage() {
           onChange={(e) => setBodySearch(e.target.value)}
           placeholder="Órgano…"
           aria-label="Filtrar por órgano de contratación"
-          className="rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm"
+          className="min-w-[120px] flex-1 rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm sm:flex-none"
         />
         <a
           href={api.exportCsvUrl({ status: status || undefined, q: q || undefined })}
