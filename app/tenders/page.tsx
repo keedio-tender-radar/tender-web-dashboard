@@ -112,6 +112,16 @@ export default function TendersPage() {
       .catch(() => toast("No se pudo copiar", "error"));
   }
 
+  async function triage(tid: string, action: string) {
+    try {
+      await api.postAction(tid, action);
+      toast(action === "interested" ? "Marcada: Interesa ✅" : "Descartada ❌");
+      load();
+    } catch (e) {
+      toast(String(e), "error");
+    }
+  }
+
   return (
     <section className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -228,7 +238,7 @@ export default function TendersPage() {
       ) : (
         <div className="grid gap-3 stagger sm:grid-cols-2">
           {visible.map((it) => (
-            <TenderCard key={it.tender.id} item={it} />
+            <TenderCard key={it.tender.id} item={it} onAction={triage} />
           ))}
         </div>
       )}
