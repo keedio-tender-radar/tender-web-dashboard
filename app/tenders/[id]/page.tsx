@@ -214,6 +214,22 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         </div>
       </div>
 
+      <nav className="sticky top-[58px] z-20 -mx-2 flex flex-wrap gap-x-4 gap-y-1 border-b border-[var(--border)] bg-[rgba(10,14,26,0.85)] px-2 py-2 text-sm backdrop-blur">
+        {[
+          ["scoring", "Scoring"],
+          ["pliego", "Pliego"],
+          ["preguntar", "Preguntar"],
+          ["decision", "Decisión"],
+          ["expediente", "Expediente"],
+          ["notas", "Notas"],
+          ["historial", "Historial"],
+        ].map(([id_, label]) => (
+          <a key={id_} href={`#${id_}`} className="text-neutral-400 hover:text-white">
+            {label}
+          </a>
+        ))}
+      </nav>
+
       <div className="grid gap-1 text-sm text-neutral-300">
         <span>Fuente: {tender.source} · Estado: {tender.status}</span>
         <span>
@@ -271,7 +287,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       {score && (
         <div className="card">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-semibold">Scoring Go/No-Go</h2>
+            <h2 id="scoring" className="font-semibold scroll-mt-24">Scoring Go/No-Go</h2>
             <span className="text-sm text-neutral-400">{score.total}/100</span>
           </div>
           <div className="mb-3">
@@ -289,7 +305,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
 
       <div className="flex flex-col gap-3 card">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Pliego / documento</h2>
+          <h2 id="pliego" className="font-semibold scroll-mt-24">Pliego / documento</h2>
           {tender?.url ? (
             <div className="flex gap-2">
               <button
@@ -340,7 +356,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       </div>
 
       <div className="flex flex-col gap-3 card">
-        <h2 className="font-semibold">Preguntar al pliego</h2>
+        <h2 id="preguntar" className="font-semibold scroll-mt-24">Preguntar al pliego</h2>
         <div className="flex gap-2">
           <input
             value={question}
@@ -380,7 +396,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-2 card">
-          <h2 className="font-semibold">Decisión (alimenta el aprendizaje)</h2>
+          <h2 id="decision" className="font-semibold scroll-mt-24">Decisión (alimenta el aprendizaje)</h2>
           <div className="flex flex-wrap gap-2">
             <select
               value={decision}
@@ -442,7 +458,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
 
       <div className="flex flex-col gap-3 card">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold">Expediente</h2>
+          <h2 id="expediente" className="font-semibold scroll-mt-24">Expediente</h2>
           <div className="flex gap-2">
             <button
               onClick={doMarkInteresting}
@@ -536,7 +552,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       </div>
 
       <div className="flex flex-col gap-3 card">
-        <h2 className="font-semibold">Notas del equipo</h2>
+        <h2 id="notas" className="font-semibold scroll-mt-24">Notas del equipo</h2>
         <div className="flex gap-2">
           <input
             value={noteBody}
@@ -571,7 +587,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
 
       {activity.length > 0 && (
         <div className="card">
-          <h2 className="mb-2 font-semibold">Historial</h2>
+          <h2 id="historial" className="mb-2 font-semibold scroll-mt-24">Historial</h2>
           <ul className="flex flex-col gap-2 text-sm">
             {activity.map((e, i) => (
               <li key={i} className="flex gap-2">
