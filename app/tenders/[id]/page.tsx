@@ -502,6 +502,13 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
                 </a>
               </>
             )}
+            <a
+              href={api.planXlsxUrl(id)}
+              title="Plan de proyecto: requerimientos, cronograma y estimación de costes"
+              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+            >
+              📊 Plan (Excel)
+            </a>
           </div>
         </div>
         {workspace && (

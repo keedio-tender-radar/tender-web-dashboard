@@ -125,6 +125,8 @@ export interface Profile {
   areas: string[];
   team: string[];
   project_months: number;
+  hourly_rate: number;
+  margin: number;
 }
 
 export interface ActivityEvent {
@@ -302,6 +304,7 @@ export const api = {
   packageMdUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.md`,
   packageDocxUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.docx`,
   packagePdfUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.pdf`,
+  planXlsxUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan.xlsx`,
   authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
   authCheck: (password: string) =>
     req<{ ok: boolean }>("/api/auth/check", {
