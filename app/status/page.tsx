@@ -39,16 +39,27 @@ function Card({ label, value }: { label: string; value: string | number }) {
   );
 }
 
+type Svc = Awaited<ReturnType<typeof api.servicesStatus>>;
+type Runs = Awaited<ReturnType<typeof api.runsSummary>>["jobs"];
+
+function dot(ok: boolean | null): string {
+  return ok === null ? "⚪" : ok ? "🟢" : "🔴";
+}
+
 export default function StatusPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [snapshot, setSnapshot] = useState<DailySnapshot | null>(null);
   const [history, setHistory] = useState<{ date: string; count: number; items: { tender_id: string }[] }[]>([]);
+  const [services, setServices] = useState<Svc | null>(null);
+  const [runs, setRuns] = useState<Runs>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     api.stats().then(setStats).catch((e) => setError(String(e)));
     api.dailySnapshot().then(setSnapshot).catch(() => setSnapshot(null));
     api.dailySnapshots(14).then(setHistory).catch(() => setHistory([]));
+    api.servicesStatus().then(setServices).catch(() => setServices(null));
+    api.runsSummary().then((r) => setRuns(r.jobs)).catch(() => setRuns([]));
   }, []);
 
   // Novedades: tenders en la foto de hoy que no estaban en la anterior.
@@ -70,7 +81,16 @@ export default function StatusPage() {
 
   return (
     <section className="flex flex-col gap-5">
-      <h1 className="text-2xl font-bold">Estado del sistema</h1>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold">Estado del sistema</h1>
+        <a
+          href={api.calendarIcsUrl()}
+          className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+          title="Suscribe los cierres de licitación a tu Google/Outlook Calendar"
+        >
+          📅 Suscribir calendario (.ics)
+        </a>
+      </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Card label="Licitaciones" value={stats.total} />
@@ -106,6 +126,50 @@ export default function StatusPage() {
               <span className="font-medium">{v}</span>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="card">
+          <h2 className="mb-2 font-semibold">Servicios e IA</h2>
+          {services ? (
+            <div className="flex flex-col gap-1 text-sm text-neutral-300">
+              <span>{dot(services.doc_service)} Extracción de pliegos (doc-service)</span>
+              <span>{dot(services.analysis_service)} Servicio de análisis</span>
+              <span>{dot(services.visual_rag)} Visual RAG (pregúntale al pliego)</span>
+              <span>
+                {dot(services.llm)} LLM real (OpenRouter)
+                {services.llm_models?.length ? (
+                  <span className="text-neutral-500"> · {services.llm_models.length} modelos</span>
+                ) : services.llm === false ? (
+                  <span className="text-neutral-500"> · rule-based</span>
+                ) : null}
+              </span>
+            </div>
+          ) : (
+            <p className="text-sm text-neutral-500">No disponible.</p>
+          )}
+        </div>
+
+        <div className="card">
+          <h2 className="mb-2 font-semibold">Últimas ejecuciones</h2>
+          {runs.length === 0 ? (
+            <p className="text-sm text-neutral-500">Sin registros de ejecución todavía.</p>
+          ) : (
+            <div className="flex flex-col gap-1 text-sm">
+              {runs.map((r) => (
+                <div key={r.job} className="flex items-center justify-between gap-2">
+                  <span className="text-neutral-300">
+                    {r.status === "ok" ? "🟢" : "🔴"} {r.job}
+                    {r.count != null ? (
+                      <span className="text-neutral-500"> · {r.count}</span>
+                    ) : null}
+                  </span>
+                  <span className="shrink-0 text-neutral-500">{ago(r.at)}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

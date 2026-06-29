@@ -100,6 +100,23 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
     }
   }
 
+  async function doExtractPliego() {
+    setGenerating(true);
+    try {
+      const r = await api.extractPliego(id);
+      toast(
+        r.cached
+          ? `Pliego analizado: ${r.chars.toLocaleString("es-ES")} caracteres`
+          : "No se pudo extraer el pliego",
+        r.cached ? "success" : "error",
+      );
+    } catch (e) {
+      toast(String(e), "error");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   async function saveDecision() {
     try {
       await api.recordDecision(id, {
@@ -465,6 +482,14 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
               className="rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark"
             >
               ⭐ Interesa → crear expediente
+            </button>
+            <button
+              onClick={doExtractPliego}
+              disabled={generating}
+              title="Descarga y analiza el PDF del pliego (mejora scoring, matriz y plan)"
+              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+            >
+              {generating ? "…" : "🔍 Analizar pliego"}
             </button>
             <button
               onClick={doGenerateDrafts}

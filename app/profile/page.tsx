@@ -26,10 +26,34 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [recalibrating, setRecalibrating] = useState(false);
 
   useEffect(() => {
     api.getProfile().then(setProfile).catch((e) => setError(String(e)));
   }, []);
+
+  async function recalibrate() {
+    setRecalibrating(true);
+    setMsg(null);
+    setError(null);
+    try {
+      const r = await api.recalibrate();
+      if (r.applied) {
+        setMsg(
+          `Umbrales recalibrados desde ${r.won} ganadas / ${r.lost} perdidas → ` +
+            `GO ≥${r.go_threshold}, Revisar ≥${r.revisar_threshold}.`,
+        );
+        const p = await api.getProfile();
+        setProfile(p);
+      } else {
+        setMsg(`No se recalibró: ${r.reason ?? "datos insuficientes"} (ganadas: ${r.won}).`);
+      }
+    } catch (e) {
+      setError(String(e));
+    } finally {
+      setRecalibrating(false);
+    }
+  }
 
   function setField(key: ListKey, value: string) {
     if (!profile) return;
@@ -130,6 +154,25 @@ export default function ProfilePage() {
               />
             </div>
           </div>
+          <div className="rounded-xl border border-[var(--border)] p-4">
+            <h2 className="font-semibold">Umbrales de recomendación</h2>
+            <p className="mt-1 text-sm text-neutral-400">
+              GO ≥ <span className="text-neutral-100">{profile.go_threshold}</span> · Revisar ≥{" "}
+              <span className="text-neutral-100">{profile.revisar_threshold}</span>
+            </p>
+            <button
+              onClick={recalibrate}
+              disabled={recalibrating}
+              className="mt-3 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+            >
+              {recalibrating ? "Recalibrando…" : "🎯 Recalibrar desde decisiones"}
+            </button>
+            <p className="mt-2 text-xs text-neutral-500">
+              Ajusta los umbrales según el histórico de licitaciones ganadas/perdidas (mín. 3
+              ganadas).
+            </p>
+          </div>
+
           <button
             onClick={save}
             disabled={saving}

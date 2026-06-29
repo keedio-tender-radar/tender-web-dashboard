@@ -127,6 +127,8 @@ export interface Profile {
   project_months: number;
   hourly_rate: number;
   margin: number;
+  go_threshold: number;
+  revisar_threshold: number;
 }
 
 export interface ActivityEvent {
@@ -305,6 +307,29 @@ export const api = {
   packageDocxUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.docx`,
   packagePdfUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.pdf`,
   planXlsxUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan.xlsx`,
+  calendarIcsUrl: () => `${API_URL}/api/tenders/calendar.ics`,
+  servicesStatus: () =>
+    req<{
+      doc_service: boolean;
+      analysis_service: boolean;
+      visual_rag: boolean;
+      llm: boolean | null;
+      llm_models?: string[];
+    }>("/api/tenders/services"),
+  runsSummary: () =>
+    req<{ jobs: { job: string; status: string; detail: string | null; count: number | null; at: string | null }[] }>(
+      "/api/runs/summary",
+    ),
+  recalibrate: () =>
+    req<{ applied: boolean; reason?: string; won: number; lost: number; go_threshold: number; revisar_threshold: number }>(
+      "/api/profile/recalibrate",
+      { method: "POST" },
+    ),
+  extractPliego: (id: string) =>
+    req<{ cached: boolean; chars: number; extracted_at: string | null }>(
+      `/api/tenders/${id}/pliego`,
+      { method: "POST" },
+    ),
   authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
   authCheck: (password: string) =>
     req<{ ok: boolean }>("/api/auth/check", {
