@@ -8,6 +8,7 @@ const LINKS: { href: string; label: string }[] = [
   { href: "/tenders", label: "Licitaciones" },
   { href: "/seguimiento", label: "Seguimiento" },
   { href: "/market", label: "Mercado" },
+  { href: "/alerts", label: "Alertas" },
   { href: "/ask", label: "Pregúntale al pliego" },
   { href: "/profile", label: "Perfil" },
   { href: "/status", label: "Estado" },

@@ -117,6 +117,18 @@ export interface Workspace {
   note: string;
 }
 
+export interface SavedAlert {
+  id: string;
+  name: string;
+  enabled: boolean;
+  min_score: number | null;
+  cpv_prefix: string | null;
+  min_budget: number | null;
+  source: string | null;
+  traffic_light: string | null;
+  q: string | null;
+}
+
 export interface Profile {
   keywords_positive: string[];
   keywords_negative: string[];
@@ -308,6 +320,14 @@ export const api = {
   packagePdfUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.pdf`,
   planXlsxUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan.xlsx`,
   calendarIcsUrl: () => `${API_URL}/api/tenders/calendar.ics`,
+  listAlerts: () => req<SavedAlert[]>("/api/alerts"),
+  createAlert: (a: Partial<SavedAlert>) =>
+    req<SavedAlert>("/api/alerts", { method: "POST", body: JSON.stringify(a) }),
+  deleteAlert: (id: string) => req<void>(`/api/alerts/${id}`, { method: "DELETE" }),
+  alertMatches: (days = 2) =>
+    req<{ tender: Tender; score: TenderScore | null; alerts: string[] }[]>(
+      `/api/alerts/matches?days=${days}`,
+    ),
   servicesStatus: () =>
     req<{
       doc_service: boolean;
