@@ -135,6 +135,12 @@ export default function MarketPage() {
               </table>
             )}
           </div>
+          <p className="text-xs text-neutral-500">
+            Fuente: formalizaciones públicas de TED. La <strong>baja</strong> se calcula sobre el
+            presupuesto base estimado del procedimiento (solo cuando consta en la nota); el{" "}
+            <strong>adjudicatario</strong> es la empresa licitadora ganadora (en contratos marco se
+            muestra la primera). Analítica orientativa sobre datos abiertos.
+          </p>
         </div>
       )}
     </section>
