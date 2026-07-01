@@ -183,6 +183,42 @@ export interface MarketStats {
   avg_budget_by_source: Record<string, number>;
 }
 
+export interface Competitor {
+  supplier: string;
+  wins: number;
+  total_awarded: number;
+  avg_baja: number | null;
+}
+
+export interface MarketBuyer {
+  buyer: string;
+  awards: number;
+  total_awarded: number;
+}
+
+export interface MarketCpv {
+  cpv_division: string;
+  awards: number;
+  total_awarded: number;
+}
+
+export interface MarketOverview {
+  awards: number;
+  total_awarded: number;
+  avg_baja: number | null;
+  top_competitor: Competitor | null;
+  top_buyer: MarketBuyer | null;
+  top_cpv_division: MarketCpv | null;
+}
+
+export interface MarketContext {
+  cpv_division: string | null;
+  sample_size: number;
+  likely_winners: Competitor[];
+  expected_baja: number | null;
+  avg_awarded: number | null;
+}
+
 export interface Duplicate {
   id: string;
   source: string;
@@ -309,6 +345,19 @@ export const api = {
       body: JSON.stringify({ body, author }),
     }),
   marketStats: () => req<MarketStats>("/api/tenders/stats/market"),
+  // Inteligencia de mercado (adjudicaciones históricas, MVP-5).
+  marketOverview: () => req<MarketOverview>("/api/market/overview"),
+  marketCompetitors: (cpvDivision?: string, limit = 10) =>
+    req<{ count: number; competitors: Competitor[] }>(
+      `/api/market/competitors?limit=${limit}` +
+        (cpvDivision ? `&cpv_division=${cpvDivision}` : ""),
+    ),
+  marketBuyers: (limit = 10) =>
+    req<{ buyers: MarketBuyer[] }>(`/api/market/buyers?limit=${limit}`),
+  marketCpv: (limit = 10) =>
+    req<{ divisions: MarketCpv[] }>(`/api/market/cpv?limit=${limit}`),
+  tenderMarketContext: (id: string) =>
+    req<MarketContext>(`/api/market/tender/${id}/context`),
   dailySnapshot: () => req<DailySnapshot>("/api/tenders/daily-snapshot"),
   dailySnapshots: (limit = 14) =>
     req<{ date: string; count: number; items: SnapshotItem[] }[]>(

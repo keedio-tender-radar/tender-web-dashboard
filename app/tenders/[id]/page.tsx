@@ -18,6 +18,7 @@ import {
   type TenderScore,
   type Workspace,
 } from "@/lib/api";
+import { MarketContextPanel } from "@/components/MarketContextPanel";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { ScoreBreakdownBars } from "@/components/ScoreBreakdownBars";
 import { cpvLabel } from "@/lib/cpv";
@@ -472,6 +473,8 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           )}
         </div>
       </div>
+
+      <MarketContextPanel tenderId={id} />
 
       <div className="flex flex-col gap-3 card">
         <div className="flex flex-wrap items-center justify-between gap-3">

@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-import { api, type MarketStats, type Stats } from "@/lib/api";
+import {
+  api,
+  type Competitor,
+  type MarketOverview,
+  type MarketStats,
+  type Stats,
+} from "@/lib/api";
 import { AreaChart } from "@/components/AreaChart";
 import { BarList } from "@/components/BarList";
 import { SkeletonStats } from "@/components/Skeleton";
@@ -22,12 +28,18 @@ function relabel(data: Record<string, number>, fn: (k: string) => string) {
 export default function MarketPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [market, setMarket] = useState<MarketStats | null>(null);
+  const [overview, setOverview] = useState<MarketOverview | null>(null);
+  const [competitors, setCompetitors] = useState<Competitor[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     api.stats().then(setStats).catch((e) => setError(String(e)));
     api.marketStats().then(setMarket).catch(() => setMarket(null));
+    api.marketOverview().then(setOverview).catch(() => setOverview(null));
+    api.marketCompetitors(undefined, 8).then((r) => setCompetitors(r.competitors)).catch(() => {});
   }, []);
+
+  const pct = (v: number | null) => (v == null ? "—" : `${(v * 100).toFixed(1)}%`);
 
   if (error) return <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">{error}</p>;
   if (!stats)
@@ -82,6 +94,49 @@ export default function MarketPage() {
           </div>
         )}
       </div>
+
+      {overview && overview.awards > 0 && (
+        <div className="flex flex-col gap-4">
+          <div>
+            <h2 className="text-xl font-bold">Adjudicaciones (histórico público)</h2>
+            <p className="text-sm text-neutral-400">
+              {overview.awards} adjudicaciones · baja media {pct(overview.avg_baja)} ·{" "}
+              {overview.total_awarded.toLocaleString("es-ES")} € adjudicados
+            </p>
+          </div>
+          <div className="card overflow-x-auto">
+            <h3 className="mb-3 font-semibold">Competidores frecuentes</h3>
+            {competitors.length === 0 ? (
+              <p className="text-sm text-neutral-500">
+                Sin datos de adjudicatarios todavía (ejecuta la ingesta de adjudicaciones).
+              </p>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="text-left text-neutral-400">
+                  <tr>
+                    <th className="pb-2">Adjudicatario</th>
+                    <th className="pb-2 text-right">Contratos</th>
+                    <th className="pb-2 text-right">Importe</th>
+                    <th className="pb-2 text-right">Baja media</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {competitors.map((c) => (
+                    <tr key={c.supplier} className="border-t border-[var(--border)]">
+                      <td className="py-1.5">{c.supplier}</td>
+                      <td className="py-1.5 text-right font-medium">{c.wins}</td>
+                      <td className="py-1.5 text-right text-neutral-400">
+                        {c.total_awarded.toLocaleString("es-ES")} €
+                      </td>
+                      <td className="py-1.5 text-right">{pct(c.avg_baja)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
