@@ -4,11 +4,29 @@ import { useEffect, useState } from "react";
 
 import { api, type AskAnswer, type TenderWithScore } from "@/lib/api";
 
+interface Turn {
+  question: string;
+  answer: AskAnswer;
+}
+
+/** Resalta las citas [n] del texto de la respuesta para que salten a la vista. */
+function renderAnswer(text: string) {
+  return text.split(/(\[\d+\])/g).map((part, i) =>
+    /^\[\d+\]$/.test(part) ? (
+      <sup key={i} className="mx-0.5 rounded bg-brand/20 px-1 text-brand">
+        {part}
+      </sup>
+    ) : (
+      <span key={i}>{part}</span>
+    ),
+  );
+}
+
 export default function AskPage() {
   const [tenders, setTenders] = useState<TenderWithScore[]>([]);
   const [tenderId, setTenderId] = useState("");
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState<AskAnswer | null>(null);
+  const [turns, setTurns] = useState<Turn[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,13 +40,22 @@ export default function AskPage() {
       .catch((e) => setError(String(e)));
   }, []);
 
+  // Cambiar de licitación empieza una conversación nueva (RAG por expediente).
+  function onTenderChange(id: string) {
+    setTenderId(id);
+    setTurns([]);
+    setError(null);
+  }
+
   async function ask() {
-    if (!tenderId || !question.trim()) return;
+    const q = question.trim();
+    if (!tenderId || !q) return;
     setLoading(true);
-    setAnswer(null);
     setError(null);
     try {
-      setAnswer(await api.ask(tenderId, question.trim()));
+      const answer = await api.ask(tenderId, q);
+      setTurns((prev) => [...prev, { question: q, answer }]);
+      setQuestion("");
     } catch (e) {
       setError(String(e));
     } finally {
@@ -41,7 +68,8 @@ export default function AskPage() {
       <div>
         <h1 className="text-2xl font-bold">Pregúntale al pliego</h1>
         <p className="text-neutral-400">
-          Elige una licitación y pregunta sobre su pliego (criterios, solvencia, plazos…).
+          Elige una licitación y pregunta sobre su pliego (criterios, solvencia, plazos…). Las
+          respuestas citan los fragmentos del pliego con <code>[n]</code>.
         </p>
       </div>
 
@@ -50,7 +78,7 @@ export default function AskPage() {
       <div className="flex flex-col gap-3 card">
         <select
           value={tenderId}
-          onChange={(e) => setTenderId(e.target.value)}
+          onChange={(e) => onTenderChange(e.target.value)}
           className="rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
         >
           {tenders.length === 0 && <option value="">No hay licitaciones puntuadas</option>}
@@ -79,29 +107,38 @@ export default function AskPage() {
         </div>
       </div>
 
-      {answer && (
-        <div className="flex flex-col gap-2 card">
-          {answer.answer && <p className="whitespace-pre-wrap">{answer.answer}</p>}
-          <p className="text-xs text-neutral-500">
-            motor: {answer.backend}
-            {answer.sources.length > 0 ? ` · ${answer.sources.length} fuente(s)` : ""}
+      {turns.map((turn, ti) => (
+        <div key={ti} className="flex flex-col gap-2 card">
+          <p className="text-sm font-medium text-neutral-300">
+            <span className="text-neutral-500">Tú:</span> {turn.question}
           </p>
-          {answer.sources.map((s, i) => (
+          {turn.answer.answer && (
+            <p className="whitespace-pre-wrap">{renderAnswer(turn.answer.answer)}</p>
+          )}
+          <p className="text-xs text-neutral-500">
+            motor: {turn.answer.backend}
+            {turn.answer.grounded === false ? " (extractivo)" : ""}
+            {turn.answer.sources.length > 0 ? ` · ${turn.answer.sources.length} fuente(s)` : ""}
+          </p>
+          {turn.answer.sources.map((s, i) => (
             <details key={i} className="text-sm">
               <summary className="cursor-pointer text-neutral-300">
+                <span className="mr-1 text-brand">[{s.n ?? i + 1}]</span>
                 {s.section ?? (s.page != null ? `Página ${s.page}` : `Fuente ${i + 1}`)}
               </summary>
-              {s.content && <p className="mt-1 whitespace-pre-wrap text-neutral-400">{s.content}</p>}
+              {s.content && (
+                <p className="mt-1 whitespace-pre-wrap text-neutral-400">{s.content}</p>
+              )}
             </details>
           ))}
         </div>
-      )}
+      ))}
 
       <p className="text-xs text-neutral-500">
-        El motor usado aparece en cada respuesta: <code>visual-rag</code> (servicio tender-visual-rag
-        por expediente) o <code>extractive</code> (texto del pliego) como respaldo. Con el backend
-        real PixelRAG/Qwen3-VL la recuperación es visual y la respuesta la genera el modelo
-        vision-language con citas de página.
+        RAG por expediente: la recuperación se filtra siempre por la licitación elegida (ADR-004) y
+        la respuesta la redacta el modelo con citas del pliego. Motores: <code>rag</code> (síntesis
+        con citas), <code>visual-rag</code> (PixelRAG externo) o <code>extractive</code> (fragmento
+        del pliego) como respaldo cuando no hay LLM.
       </p>
     </section>
   );

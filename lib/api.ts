@@ -380,6 +380,7 @@ export const api = {
 };
 
 export interface AskSource {
+  n?: number;
   section?: string | null;
   content?: string;
   page?: number;
@@ -388,6 +389,7 @@ export interface AskSource {
 export interface AskAnswer {
   backend: string;
   answer: string | null;
+  grounded?: boolean;
   sources: AskSource[];
 }
 
