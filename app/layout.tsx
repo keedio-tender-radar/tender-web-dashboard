@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body>
         <NavBar />
-        <main className="mx-auto max-w-6xl px-5 py-8">
+        <main className="mx-auto max-w-6xl px-5 py-8 sm:px-6 sm:py-10">
           <AuthGate>{children}</AuthGate>
         </main>
         <Toaster />
