@@ -1,6 +1,14 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+import {
+  Download,
+  FileSearch,
+  FileSpreadsheet,
+  FileText,
+  Package,
+  Star,
+} from "lucide-react";
 
 import {
   api,
@@ -537,60 +545,60 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           <div className="flex gap-2">
             <button
               onClick={doMarkInteresting}
-              className="rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark"
+              className="flex items-center gap-1.5 rounded-lg bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark"
             >
-              ⭐ Interesa → crear expediente
+              <Star className="h-4 w-4" /> Interesa → crear expediente
             </button>
             <button
               onClick={doExtractPliego}
               disabled={generating}
               title="Descarga y analiza el PDF del pliego (mejora scoring, matriz y plan)"
-              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
             >
-              {generating ? "…" : "🔍 Analizar pliego"}
+              <FileSearch className="h-4 w-4" /> {generating ? "Analizando…" : "Analizar pliego"}
             </button>
             <button
               onClick={doGenerateDrafts}
               disabled={generating}
-              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
             >
-              {generating ? "…" : "📝 Generar borradores"}
+              <FileText className="h-4 w-4" /> {generating ? "Generando…" : "Generar borradores"}
             </button>
             <button
               onClick={doPreparePackage}
               disabled={generating}
-              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand disabled:opacity-50"
             >
-              {generating ? "…" : "📦 Preparar paquete"}
+              <Package className="h-4 w-4" /> {generating ? "Preparando…" : "Preparar paquete"}
             </button>
             {drafts.length > 0 && (
               <>
                 <a
                   href={api.packageDocxUrl(id)}
-                  className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+                  className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
                 >
-                  ⬇ Word
+                  <Download className="h-4 w-4" /> Word
                 </a>
                 <a
                   href={api.packagePdfUrl(id)}
-                  className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+                  className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
                 >
-                  ⬇ PDF
+                  <Download className="h-4 w-4" /> PDF
                 </a>
                 <a
                   href={api.packageMdUrl(id)}
-                  className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+                  className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
                 >
-                  ⬇ .md
+                  <Download className="h-4 w-4" /> .md
                 </a>
               </>
             )}
             <a
               href={api.planXlsxUrl(id)}
               title="Plan de proyecto: requerimientos, cronograma y estimación de costes"
-              className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+              className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
             >
-              📊 Plan (Excel)
+              <FileSpreadsheet className="h-4 w-4" /> Plan (Excel)
             </a>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Download } from "lucide-react";
 
 import {
   api,
@@ -69,9 +70,9 @@ export default function MarketPage() {
         </div>
         <a
           href={api.marketCsvUrl()}
-          className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
         >
-          ⬇ CSV
+          <Download className="h-4 w-4" /> CSV
         </a>
       </div>
 
@@ -125,9 +126,9 @@ export default function MarketPage() {
             </div>
             <a
               href={api.marketAwardsCsvUrl()}
-              className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+              className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
             >
-              ⬇ CSV
+              <Download className="h-4 w-4" /> CSV
             </a>
           </div>
           <div className="card overflow-x-auto">

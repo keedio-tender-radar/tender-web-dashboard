@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
+import { CalendarPlus } from "lucide-react";
 
 import { api, type DailySnapshot, type Stats } from "@/lib/api";
 import { SkeletonStats } from "@/components/Skeleton";
@@ -92,10 +93,10 @@ export default function StatusPage() {
         <h1 className="text-2xl font-bold">Estado del sistema</h1>
         <a
           href={api.calendarIcsUrl()}
-          className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
           title="Suscribe los cierres de licitación a tu Google/Outlook Calendar"
         >
-          📅 Suscribir calendario (.ics)
+          <CalendarPlus className="h-4 w-4" /> Suscribir calendario (.ics)
         </a>
       </div>
 

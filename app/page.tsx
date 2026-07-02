@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { Siren, Star } from "lucide-react";
+
 import { api, type DailySnapshot, type Stats, type TenderWithScore } from "@/lib/api";
 import { StatsPanel } from "@/components/StatsPanel";
 import { TenderCard } from "@/components/TenderCard";
@@ -60,7 +62,9 @@ export default function RadarPage() {
 
           {urgent.length > 0 && (
             <div className="fade-up">
-              <h2 className="mb-3 text-lg font-semibold">🚨 Urgentes (cierre próximo)</h2>
+              <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold">
+                <Siren className="h-5 w-5 text-rose-400" /> Urgentes (cierre próximo)
+              </h2>
               <div className="grid gap-3 stagger sm:grid-cols-2">
                 {urgent.map((it) => (
                   <TenderCard key={it.tender.id} item={it} />
@@ -70,7 +74,9 @@ export default function RadarPage() {
           )}
 
           <div className="fade-up">
-            <h2 className="mb-3 text-lg font-semibold">⭐ Top oportunidades</h2>
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold">
+              <Star className="h-5 w-5 text-amber-400" /> Top oportunidades
+            </h2>
             {top.length === 0 ? (
               <p className="text-neutral-500">
                 Aún no hay licitaciones puntuadas. Ejecuta la ingesta y el análisis para poblar el

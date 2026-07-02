@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Check, X } from "lucide-react";
 
 import { trafficLight, type TenderWithScore } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
@@ -86,15 +87,15 @@ export function TenderCard({
         <div className="mt-3 flex gap-2 border-t border-[var(--border)] pt-3">
           <button
             onClick={() => onAction(t.id, "interested")}
-            className="rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs hover:border-emerald-500 hover:text-emerald-300"
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs hover:border-emerald-500 hover:text-emerald-300"
           >
-            ✅ Interesa
+            <Check className="h-3.5 w-3.5" /> Interesa
           </button>
           <button
             onClick={() => onAction(t.id, "discarded")}
-            className="rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs hover:border-rose-500 hover:text-rose-300"
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs hover:border-rose-500 hover:text-rose-300"
           >
-            ❌ Descartar
+            <X className="h-3.5 w-3.5" /> Descartar
           </button>
         </div>
       )}

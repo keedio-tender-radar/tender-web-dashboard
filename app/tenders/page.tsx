@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { Download } from "lucide-react";
+
 import { api, type TenderWithScore } from "@/lib/api";
 import { TenderCard } from "@/components/TenderCard";
 import { SkeletonGrid } from "@/components/Skeleton";
@@ -228,9 +230,9 @@ export default function TendersPage() {
         />
         <a
           href={api.exportCsvUrl({ status: status || undefined, q: q || undefined })}
-          className="rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+          className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
         >
-          ⬇ CSV
+          <Download className="h-4 w-4" /> CSV
         </a>
       </div>
 

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { Loader2 } from "lucide-react";
+
 import { api, type AskAnswer, type TenderWithScore } from "@/lib/api";
 
 interface Turn {
@@ -132,7 +134,9 @@ export default function AskPage() {
       )}
 
       {loading && (
-        <p className="text-sm text-neutral-400">🔎 Consultando el pliego…</p>
+        <p className="flex items-center gap-2 text-sm text-neutral-400">
+          <Loader2 className="h-4 w-4 animate-spin text-brand" /> Consultando el pliego…
+        </p>
       )}
 
       {turns.map((turn, ti) => (
