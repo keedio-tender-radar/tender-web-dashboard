@@ -91,9 +91,23 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   async function doGenerateDrafts() {
     setGenerating(true);
     try {
-      const r = await api.generateOfferDrafts(id);
-      toast(`Borradores generados: ${r.count}`);
-      setDrafts(await api.generatedDocuments(id));
+      // Asíncrono: se lanza en segundo plano y sondeamos el estado (evita timeouts del navegador).
+      await api.generateOfferDrafts(id);
+      toast("Generando borradores… (puede tardar hasta ~1 min)");
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+      for (let i = 0; i < 40; i++) {
+        await sleep(3000);
+        const st = await api.offerDraftsStatus(id);
+        if (st.status === "ok") {
+          setDrafts(await api.generatedDocuments(id));
+          toast(`Borradores generados: ${st.count ?? ""}`);
+          break;
+        }
+        if (st.status === "error") {
+          setError(`Generación fallida: ${st.detail ?? "error"}`);
+          break;
+        }
+      }
     } catch (e) {
       setError(String(e));
     } finally {

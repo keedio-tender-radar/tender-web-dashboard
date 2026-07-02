@@ -350,7 +350,11 @@ export const api = {
   markInteresting: (id: string) =>
     req<Workspace>(`/api/tenders/${id}/mark-interesting`, { method: "POST" }),
   generateOfferDrafts: (id: string) =>
-    req<{ count: number }>(`/api/tenders/${id}/generate-offer-drafts`, { method: "POST" }),
+    req<{ status: string }>(`/api/tenders/${id}/generate-offer-drafts`, { method: "POST" }),
+  offerDraftsStatus: (id: string) =>
+    req<{ status: string; detail?: string | null; count?: number | null }>(
+      `/api/tenders/${id}/offer-drafts-status`,
+    ),
   generatedDocuments: (id: string) =>
     req<GeneratedDoc[]>(`/api/tenders/${id}/generated-documents`),
   prepareSubmissionPackage: (id: string) =>
