@@ -26,13 +26,17 @@ export function BarList({
               <span className="w-40 shrink-0 truncate text-neutral-300" title={label}>
                 {label}
               </span>
-              <div className="h-3 grow rounded bg-neutral-800">
+              <div className="h-2.5 grow overflow-hidden rounded-full bg-[#0b1020]">
                 <div
-                  className={`h-3 rounded ${color}`}
-                  style={{ width: `${Math.round((value / max) * 100)}%` }}
+                  className={`h-full rounded-full ${color}`}
+                  style={{
+                    width: `${value > 0 ? Math.max(3, Math.round((value / max) * 100)) : 0}%`,
+                  }}
                 />
               </div>
-              <span className="w-8 shrink-0 text-right font-medium">{value}</span>
+              <span className="tnum w-10 shrink-0 text-right font-medium text-neutral-200">
+                {value}
+              </span>
             </div>
           ))}
         </div>
