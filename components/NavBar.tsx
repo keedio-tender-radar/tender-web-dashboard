@@ -22,7 +22,7 @@ export function NavBar() {
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(10,14,26,0.8)] backdrop-blur">
       <nav className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4">
-        <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
+        <Link href="/" className="flex items-center gap-2 font-display text-[0.95rem] font-bold tracking-tight">
           <span className="grid h-7 w-7 place-items-center rounded-lg bg-brand/15 text-brand">
             📡
           </span>
