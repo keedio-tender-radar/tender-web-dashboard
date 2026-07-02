@@ -131,37 +131,57 @@ export default function MarketPage() {
                 Sin datos de adjudicatarios todavía (ejecuta la ingesta de adjudicaciones).
               </p>
             ) : (
-              <table className="w-full text-sm">
-                <thead className="text-left text-neutral-400">
-                  <tr>
-                    <th className="pb-2">Adjudicatario</th>
-                    <th className="pb-2 text-right">Contratos</th>
-                    <th className="pb-2 text-right">Importe</th>
-                    <th className="pb-2 text-right">Cuota</th>
-                    <th className="pb-2 text-right">Baja media</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {competitors.map((c) => (
-                    <tr key={c.supplier} className="border-t border-[var(--border)]">
-                      <td className="py-1.5">
-                        <Link
-                          href={`/market/competitor?name=${encodeURIComponent(c.supplier)}`}
-                          className="hover:text-brand hover:underline"
+              (() => {
+                const maxShare = Math.max(...competitors.map((c) => c.share ?? 0), 0.0001);
+                return (
+                  <table className="w-full text-sm">
+                    <thead className="text-left text-xs uppercase tracking-wide text-neutral-400">
+                      <tr>
+                        <th className="pb-2 font-medium">Adjudicatario</th>
+                        <th className="pb-2 text-right font-medium">Contratos</th>
+                        <th className="pb-2 text-right font-medium">Importe</th>
+                        <th className="pb-2 pl-4 font-medium">Cuota de mercado</th>
+                        <th className="pb-2 text-right font-medium">Baja</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {competitors.map((c) => (
+                        <tr
+                          key={c.supplier}
+                          className="border-t border-[var(--border)] transition-colors hover:bg-white/[0.03]"
                         >
-                          {c.supplier}
-                        </Link>
-                      </td>
-                      <td className="py-1.5 text-right font-medium">{c.wins}</td>
-                      <td className="py-1.5 text-right text-neutral-400">
-                        {c.total_awarded.toLocaleString("es-ES")} €
-                      </td>
-                      <td className="py-1.5 text-right">{pct(c.share ?? null)}</td>
-                      <td className="py-1.5 text-right">{pct(c.avg_baja)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          <td className="py-2">
+                            <Link
+                              href={`/market/competitor?name=${encodeURIComponent(c.supplier)}`}
+                              className="font-medium text-neutral-100 hover:text-brand hover:underline"
+                            >
+                              {c.supplier}
+                            </Link>
+                          </td>
+                          <td className="py-2 text-right font-medium">{c.wins}</td>
+                          <td className="py-2 text-right text-neutral-400">
+                            {c.total_awarded.toLocaleString("es-ES")} €
+                          </td>
+                          <td className="py-2 pl-4">
+                            <div className="flex items-center gap-2">
+                              <span className="h-1.5 grow overflow-hidden rounded-full bg-[#0b1020]">
+                                <span
+                                  className="block h-full rounded-full bg-brand"
+                                  style={{ width: `${((c.share ?? 0) / maxShare) * 100}%` }}
+                                />
+                              </span>
+                              <span className="tnum w-12 shrink-0 text-right text-neutral-300">
+                                {pct(c.share ?? null)}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-2 text-right text-neutral-400">{pct(c.avg_baja)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                );
+              })()
             )}
           </div>
           <div className="grid gap-4 md:grid-cols-2">
