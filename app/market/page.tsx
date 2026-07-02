@@ -114,7 +114,13 @@ export default function MarketPage() {
               <p className="tnum text-sm text-neutral-400">
                 {overview.awards} adjudicaciones · baja media {pct(overview.avg_baja)} ·{" "}
                 {overview.total_awarded.toLocaleString("es-ES")} € adjudicados
-                {overview.concentration?.label && ` · mercado ${overview.concentration.label}`}
+                {overview.concentration?.label &&
+                  ` · mercado ${overview.concentration.label}` +
+                    (overview.concentration.hhi != null
+                      ? ` (HHI ${overview.concentration.hhi.toLocaleString("es-ES", {
+                          maximumFractionDigits: 3,
+                        })} · ${overview.concentration.competitors} competidores)`
+                      : "")}
               </p>
             </div>
             <a
