@@ -23,7 +23,7 @@ export function ScoreBadge({ score }: { score: TenderScore | null }) {
       title={`Encaje Keedio ${score.total}/100 · ${
         REC_LABEL[score.recommendation] ?? score.recommendation
       } (GO ≥80 · Revisar 40-79 · No-Go <40)`}
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold text-white ${color(
+      className={`tnum inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold text-white ${color(
         score.total,
       )}`}
     >

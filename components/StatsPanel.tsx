@@ -3,7 +3,7 @@ import type { Stats } from "@/lib/api";
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
     <div className="card">
-      <div className="text-2xl font-bold">{value}</div>
+      <div className="tnum text-2xl font-bold">{value}</div>
       <div className="text-xs uppercase tracking-wide text-neutral-400">{label}</div>
     </div>
   );
