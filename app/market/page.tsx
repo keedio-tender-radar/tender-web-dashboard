@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 import {
   api,
@@ -138,7 +139,14 @@ export default function MarketPage() {
                 <tbody>
                   {competitors.map((c) => (
                     <tr key={c.supplier} className="border-t border-[var(--border)]">
-                      <td className="py-1.5">{c.supplier}</td>
+                      <td className="py-1.5">
+                        <Link
+                          href={`/market/competitor?name=${encodeURIComponent(c.supplier)}`}
+                          className="hover:text-brand hover:underline"
+                        >
+                          {c.supplier}
+                        </Link>
+                      </td>
                       <td className="py-1.5 text-right font-medium">{c.wins}</td>
                       <td className="py-1.5 text-right text-neutral-400">
                         {c.total_awarded.toLocaleString("es-ES")} €

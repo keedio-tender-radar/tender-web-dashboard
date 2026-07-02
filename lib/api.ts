@@ -212,6 +212,28 @@ export interface MarketOverview {
   top_cpv_division: MarketCpv | null;
 }
 
+export interface CompetitorContract {
+  title: string | null;
+  buyer: string | null;
+  cpv_division: string | null;
+  budget_amount: number | null;
+  awarded_amount: number | null;
+  baja: number | null;
+  award_date: string | null;
+  url: string | null;
+}
+
+export interface CompetitorProfile {
+  supplier: string;
+  wins: number;
+  total_awarded: number;
+  avg_baja: number | null;
+  share: number | null;
+  by_buyer: MarketBuyer[];
+  by_cpv: MarketCpv[];
+  contracts: CompetitorContract[];
+}
+
 export interface MarketContext {
   cpv_division: string | null;
   sample_size: number;
@@ -358,6 +380,8 @@ export const api = {
   marketCpv: (limit = 10) =>
     req<{ divisions: MarketCpv[] }>(`/api/market/cpv?limit=${limit}`),
   marketAwardsCsvUrl: () => `${API_URL}/api/market/awards.csv`,
+  competitorProfile: (name: string) =>
+    req<CompetitorProfile>(`/api/market/competitor?name=${encodeURIComponent(name)}`),
   tenderMarketContext: (id: string) =>
     req<MarketContext>(`/api/market/tender/${id}/context`),
   dailySnapshot: () => req<DailySnapshot>("/api/tenders/daily-snapshot"),
