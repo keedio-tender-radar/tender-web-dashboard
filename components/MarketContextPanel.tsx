@@ -38,6 +38,12 @@ export function MarketContextPanel({ tenderId }: { tenderId: string }) {
             Importe medio adjudicado: {ctx.avg_awarded.toLocaleString("es-ES")} €
           </span>
         )}
+        {ctx.concentration?.label && (
+          <span className="text-neutral-400">
+            Mercado: <span className="font-medium text-neutral-200">{ctx.concentration.label}</span>{" "}
+            ({ctx.concentration.competitors} competidores)
+          </span>
+        )}
       </div>
       {ctx.likely_winners.length > 0 && (
         <div>

@@ -203,10 +203,17 @@ export interface MarketCpv {
   total_awarded: number;
 }
 
+export interface Concentration {
+  hhi: number | null;
+  label: string | null;
+  competitors: number;
+}
+
 export interface MarketOverview {
   awards: number;
   total_awarded: number;
   avg_baja: number | null;
+  concentration?: Concentration;
   top_competitor: Competitor | null;
   top_buyer: MarketBuyer | null;
   top_cpv_division: MarketCpv | null;
@@ -240,6 +247,7 @@ export interface MarketContext {
   likely_winners: Competitor[];
   expected_baja: number | null;
   avg_awarded: number | null;
+  concentration?: Concentration;
 }
 
 export interface Duplicate {

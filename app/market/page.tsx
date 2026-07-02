@@ -110,6 +110,7 @@ export default function MarketPage() {
               <p className="text-sm text-neutral-400">
                 {overview.awards} adjudicaciones · baja media {pct(overview.avg_baja)} ·{" "}
                 {overview.total_awarded.toLocaleString("es-ES")} € adjudicados
+                {overview.concentration?.label && ` · mercado ${overview.concentration.label}`}
               </p>
             </div>
             <a
