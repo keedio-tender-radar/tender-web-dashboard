@@ -65,7 +65,7 @@ export default function SeguimientoPage() {
         return (
           <div key={g.status} className="flex flex-col gap-3">
             <h2 className="font-semibold">
-              {g.label} <span className="text-neutral-500">({items.length})</span>
+              {g.label} <span className="tnum text-neutral-400">({items.length})</span>
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
               {items.map((it) => {
@@ -75,7 +75,7 @@ export default function SeguimientoPage() {
                   <div key={it.tender.id} className="relative">
                     {d !== null && (
                       <span
-                        className={`absolute right-2 top-2 z-10 rounded px-1.5 py-0.5 text-[11px] ${
+                        className={`tnum absolute right-2 top-2 z-10 rounded px-1.5 py-0.5 text-[11px] ${
                           urgent ? "bg-red-900 text-red-100" : "bg-[#0b1020] text-neutral-400"
                         }`}
                       >

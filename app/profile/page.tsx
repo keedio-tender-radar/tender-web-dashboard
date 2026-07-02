@@ -118,7 +118,7 @@ export default function ProfilePage() {
               onChange={(e) =>
                 setProfile({ ...profile, project_months: Number(e.target.value) || 1 })
               }
-              className="w-32 rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
+              className="tabular-nums w-32 rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
             />
           </div>
           <div className="flex flex-wrap gap-6">
@@ -135,7 +135,7 @@ export default function ProfilePage() {
                 onChange={(e) =>
                   setProfile({ ...profile, hourly_rate: Number(e.target.value) || 1 })
                 }
-                className="w-32 rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
+                className="tabular-nums w-32 rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                 step={0.05}
                 value={profile.margin}
                 onChange={(e) => setProfile({ ...profile, margin: Number(e.target.value) || 0 })}
-                className="w-32 rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
+                className="tabular-nums w-32 rounded-lg border border-[var(--border)] bg-[#0b1020] px-3 py-2 text-sm"
               />
             </div>
           </div>
