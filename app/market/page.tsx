@@ -123,6 +123,7 @@ export default function MarketPage() {
                     <th className="pb-2">Adjudicatario</th>
                     <th className="pb-2 text-right">Contratos</th>
                     <th className="pb-2 text-right">Importe</th>
+                    <th className="pb-2 text-right">Cuota</th>
                     <th className="pb-2 text-right">Baja media</th>
                   </tr>
                 </thead>
@@ -134,6 +135,7 @@ export default function MarketPage() {
                       <td className="py-1.5 text-right text-neutral-400">
                         {c.total_awarded.toLocaleString("es-ES")} €
                       </td>
+                      <td className="py-1.5 text-right">{pct(c.share ?? null)}</td>
                       <td className="py-1.5 text-right">{pct(c.avg_baja)}</td>
                     </tr>
                   ))}

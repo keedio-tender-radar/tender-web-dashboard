@@ -188,6 +188,7 @@ export interface Competitor {
   wins: number;
   total_awarded: number;
   avg_baja: number | null;
+  share?: number | null;
 }
 
 export interface MarketBuyer {
