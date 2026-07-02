@@ -357,6 +357,7 @@ export const api = {
     req<{ buyers: MarketBuyer[] }>(`/api/market/buyers?limit=${limit}`),
   marketCpv: (limit = 10) =>
     req<{ divisions: MarketCpv[] }>(`/api/market/cpv?limit=${limit}`),
+  marketAwardsCsvUrl: () => `${API_URL}/api/market/awards.csv`,
   tenderMarketContext: (id: string) =>
     req<MarketContext>(`/api/market/tender/${id}/context`),
   dailySnapshot: () => req<DailySnapshot>("/api/tenders/daily-snapshot"),

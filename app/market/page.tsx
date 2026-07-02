@@ -103,12 +103,20 @@ export default function MarketPage() {
 
       {overview && overview.awards > 0 && (
         <div className="flex flex-col gap-4">
-          <div>
-            <h2 className="text-xl font-bold">Adjudicaciones (histórico público)</h2>
-            <p className="text-sm text-neutral-400">
-              {overview.awards} adjudicaciones · baja media {pct(overview.avg_baja)} ·{" "}
-              {overview.total_awarded.toLocaleString("es-ES")} € adjudicados
-            </p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-bold">Adjudicaciones (histórico público)</h2>
+              <p className="text-sm text-neutral-400">
+                {overview.awards} adjudicaciones · baja media {pct(overview.avg_baja)} ·{" "}
+                {overview.total_awarded.toLocaleString("es-ES")} € adjudicados
+              </p>
+            </div>
+            <a
+              href={api.marketAwardsCsvUrl()}
+              className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+            >
+              ⬇ CSV
+            </a>
           </div>
           <div className="card overflow-x-auto">
             <h3 className="mb-3 font-semibold">Competidores frecuentes</h3>
