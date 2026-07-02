@@ -9,6 +9,13 @@ interface Turn {
   answer: AskAnswer;
 }
 
+const SUGGESTIONS = [
+  "¿Qué solvencia técnica exige el pliego?",
+  "¿Cuál es el plazo de presentación?",
+  "¿Qué criterios de adjudicación se valoran?",
+  "¿Se exige garantía o aval?",
+];
+
 /** Resalta las citas [n] del texto de la respuesta para que salten a la vista. */
 function renderAnswer(text: string) {
   return text.split(/(\[\d+\])/g).map((part, i) =>
@@ -106,6 +113,27 @@ export default function AskPage() {
           </button>
         </div>
       </div>
+
+      {turns.length === 0 && !loading && (
+        <div className="card flex flex-col gap-2">
+          <p className="text-sm text-neutral-400">Empieza por una de estas, o escribe la tuya:</p>
+          <div className="flex flex-wrap gap-2">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                onClick={() => setQuestion(s)}
+                className="rounded-full border border-[var(--border)] px-3 py-1 text-sm text-neutral-300 hover:border-brand hover:text-white"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {loading && (
+        <p className="text-sm text-neutral-400">🔎 Consultando el pliego…</p>
+      )}
 
       {turns.map((turn, ti) => (
         <div key={ti} className="flex flex-col gap-2 card">
