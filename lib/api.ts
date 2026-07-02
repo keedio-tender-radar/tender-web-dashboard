@@ -241,6 +241,15 @@ export interface CompetitorProfile {
   contracts: CompetitorContract[];
 }
 
+export interface Incumbent {
+  supplier: string | null;
+  award_date: string | null;
+  awarded_amount: number | null;
+  title: string | null;
+  url: string | null;
+  buyer_awards: number;
+}
+
 export interface MarketContext {
   cpv_division: string | null;
   sample_size: number;
@@ -248,6 +257,7 @@ export interface MarketContext {
   expected_baja: number | null;
   avg_awarded: number | null;
   concentration?: Concentration;
+  incumbent?: Incumbent | null;
 }
 
 export interface Duplicate {
