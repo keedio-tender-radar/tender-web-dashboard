@@ -3,15 +3,16 @@
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
-import { CalendarPlus } from "lucide-react";
+import { CalendarPlus, Sparkles } from "lucide-react";
 
 import { api, type DailySnapshot, type Stats } from "@/lib/api";
+import { SemaphoreDot } from "@/components/SemaphoreDot";
 import { SkeletonStats } from "@/components/Skeleton";
 
 const PIPELINE = [
   ["06:00", "Ingesta (PLACSP + TED + portales extra)"],
   ["06:30", "Scoring Go/No-Go"],
-  ["06:45", "Alertas de oportunidades 🟢 GO"],
+  ["06:45", "Alertas de oportunidades GO"],
   ["07:00", "Re-análisis con el pliego"],
   ["07:30", "Radar diario → Telegram"],
   ["08:00", "Recordatorios de cierre → Telegram"],
@@ -32,10 +33,10 @@ function ago(iso: string | null): string {
   return `hace ${Math.floor(h / 24)} d`;
 }
 
-function freshness(iso: string | null): string {
-  if (!iso) return "🔴";
+function freshnessLight(iso: string | null): string {
+  if (!iso) return "red";
   const h = (Date.now() - new Date(iso).getTime()) / 3600000;
-  return h <= 26 ? "🟢" : h <= 50 ? "🟡" : "🔴";
+  return h <= 26 ? "green" : h <= 50 ? "yellow" : "red";
 }
 
 function Card({ label, value }: { label: string; value: string | number }) {
@@ -50,8 +51,8 @@ function Card({ label, value }: { label: string; value: string | number }) {
 type Svc = Awaited<ReturnType<typeof api.servicesStatus>>;
 type Runs = Awaited<ReturnType<typeof api.runsSummary>>["jobs"];
 
-function dot(ok: boolean | null): string {
-  return ok === null ? "⚪" : ok ? "🟢" : "🔴";
+function okLight(ok: boolean | null): string {
+  return ok === null ? "gray" : ok ? "green" : "red";
 }
 
 export default function StatusPage() {
@@ -110,13 +111,18 @@ export default function StatusPage() {
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="card">
           <h2 className="mb-2 font-semibold">Frescura del pipeline</h2>
-          <p className="text-sm text-neutral-300">
-            {freshness(stats.last_ingested_at)} Última ingesta:{" "}
-            <span className="text-neutral-100">{ago(stats.last_ingested_at)}</span>
+          <p className="flex items-center gap-2 text-sm text-neutral-300">
+            <SemaphoreDot light={freshnessLight(stats.last_ingested_at)} />
+            <span>
+              Última ingesta:{" "}
+              <span className="text-neutral-100">{ago(stats.last_ingested_at)}</span>
+            </span>
           </p>
-          <p className="text-sm text-neutral-300">
-            {freshness(stats.last_scored_at)} Último scoring:{" "}
-            <span className="text-neutral-100">{ago(stats.last_scored_at)}</span>
+          <p className="flex items-center gap-2 text-sm text-neutral-300">
+            <SemaphoreDot light={freshnessLight(stats.last_scored_at)} />
+            <span>
+              Último scoring: <span className="text-neutral-100">{ago(stats.last_scored_at)}</span>
+            </span>
           </p>
           <p className="mt-2 text-sm text-neutral-400">
             Presupuesto total en oportunidades GO:{" "}
@@ -141,17 +147,28 @@ export default function StatusPage() {
         <div className="card">
           <h2 className="mb-2 font-semibold">Servicios e IA</h2>
           {services ? (
-            <div className="flex flex-col gap-1 text-sm text-neutral-300">
-              <span>{dot(services.doc_service)} Extracción de pliegos (doc-service)</span>
-              <span>{dot(services.analysis_service)} Servicio de análisis</span>
-              <span>{dot(services.visual_rag)} Visual RAG (pregúntale al pliego)</span>
-              <span>
-                {dot(services.llm)} LLM real (OpenRouter)
-                {services.llm_models?.length ? (
-                  <span className="text-neutral-500"> · {services.llm_models.length} modelos</span>
-                ) : services.llm === false ? (
-                  <span className="text-neutral-500"> · rule-based</span>
-                ) : null}
+            <div className="flex flex-col gap-1.5 text-sm text-neutral-300">
+              <span className="flex items-center gap-2">
+                <SemaphoreDot light={okLight(services.doc_service)} /> Extracción de pliegos
+                (doc-service)
+              </span>
+              <span className="flex items-center gap-2">
+                <SemaphoreDot light={okLight(services.analysis_service)} /> Servicio de análisis
+              </span>
+              <span className="flex items-center gap-2">
+                <SemaphoreDot light={okLight(services.visual_rag)} /> Visual RAG (pregúntale al
+                pliego)
+              </span>
+              <span className="flex items-center gap-2">
+                <SemaphoreDot light={okLight(services.llm)} />
+                <span>
+                  LLM real (OpenRouter)
+                  {services.llm_models?.length ? (
+                    <span className="text-neutral-500"> · {services.llm_models.length} modelos</span>
+                  ) : services.llm === false ? (
+                    <span className="text-neutral-500"> · rule-based</span>
+                  ) : null}
+                </span>
               </span>
             </div>
           ) : (
@@ -167,11 +184,14 @@ export default function StatusPage() {
             <div className="flex flex-col gap-1 text-sm">
               {runs.map((r) => (
                 <div key={r.job} className="flex items-center justify-between gap-2">
-                  <span className="text-neutral-300">
-                    {r.status === "ok" ? "🟢" : "🔴"} {r.job}
-                    {r.count != null ? (
-                      <span className="text-neutral-500"> · {r.count}</span>
-                    ) : null}
+                  <span className="flex items-center gap-2 text-neutral-300">
+                    <SemaphoreDot light={r.status === "ok" ? "green" : "red"} />
+                    <span>
+                      {r.job}
+                      {r.count != null ? (
+                        <span className="text-neutral-500"> · {r.count}</span>
+                      ) : null}
+                    </span>
                   </span>
                   <span className="shrink-0 text-neutral-500">{ago(r.at)}</span>
                 </div>
@@ -215,8 +235,8 @@ export default function StatusPage() {
           <ol className="flex flex-col gap-1 text-sm">
             {snapshot.items.slice(0, 10).map((it, i) => (
               <li key={it.tender_id} className="flex items-center gap-2">
-                <span className="w-5 shrink-0 text-neutral-500">{i + 1}.</span>
-                <span>{it.traffic_light_label.split(" ")[0]}</span>
+                <span className="tnum w-5 shrink-0 text-neutral-500">{i + 1}.</span>
+                <SemaphoreDot light={it.traffic_light} />
                 <Link href={`/tenders/${it.tender_id}`} className="grow truncate hover:text-brand">
                   {it.title}
                 </Link>
@@ -238,7 +258,9 @@ export default function StatusPage() {
           <h2 className="mb-2 font-semibold">
             Histórico de fotos{" "}
             {newToday > 0 && (
-              <span className="text-sm font-normal text-emerald-400">· 🆕 {newToday} nuevas hoy</span>
+              <span className="inline-flex items-center gap-1 text-sm font-normal text-emerald-400">
+                · <Sparkles className="h-3.5 w-3.5" /> {newToday} nuevas hoy
+              </span>
             )}
           </h2>
           <div className="flex flex-col gap-1 text-sm">

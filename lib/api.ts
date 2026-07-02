@@ -298,18 +298,20 @@ export interface SubmissionPackage {
 export function trafficLight(score: TenderScore | null, deadline: string | null): {
   light: TrafficLight;
   label: string;
+  text: string;
 } {
   const total = score?.total ?? null;
   const rec = score?.recommendation ?? null;
   const days = deadline ? Math.floor((new Date(deadline).getTime() - Date.now()) / 86400000) : null;
-  if (total === null && days === null) return { light: "gray", label: "⚪ Sin datos" };
-  if (days !== null && days < 0) return { light: "red", label: "🔴 Vencida" };
-  if (rec === "no_go" || (total !== null && total < 50)) return { light: "red", label: "🔴 Descartar" };
+  if (total === null && days === null) return { light: "gray", label: "⚪ Sin datos", text: "Sin datos" };
+  if (days !== null && days < 0) return { light: "red", label: "🔴 Vencida", text: "Vencida" };
+  if (rec === "no_go" || (total !== null && total < 50))
+    return { light: "red", label: "🔴 Descartar", text: "Descartar" };
   if (rec === "revisar" || rec === "partner" || (total !== null && total < 70) || (days !== null && days <= 7))
-    return { light: "yellow", label: "🟡 Revisar" };
+    return { light: "yellow", label: "🟡 Revisar", text: "Revisar" };
   if (total !== null && total >= 70 && (days === null || days > 7))
-    return { light: "green", label: "🟢 Prioritaria" };
-  return { light: "gray", label: "⚪ Sin datos" };
+    return { light: "green", label: "🟢 Prioritaria", text: "Prioritaria" };
+  return { light: "gray", label: "⚪ Sin datos", text: "Sin datos" };
 }
 
 export interface Stats {

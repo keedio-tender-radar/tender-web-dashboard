@@ -3,6 +3,7 @@ import { Check, X } from "lucide-react";
 
 import { trafficLight, type TenderWithScore } from "@/lib/api";
 import { ScoreBadge } from "@/components/ScoreBadge";
+import { SemaphoreDot } from "@/components/SemaphoreDot";
 import { cpvLabel } from "@/lib/cpv";
 
 function money(amount: number | null, currency = "EUR"): string {
@@ -18,6 +19,7 @@ export function TenderCard({
   onAction?: (id: string, action: string) => void;
 }) {
   const t = item.tender;
+  const tl = trafficLight(item.score, t.deadline);
   const days = t.deadline
     ? Math.floor((new Date(t.deadline).getTime() - Date.now()) / 86400000)
     : null;
@@ -80,7 +82,10 @@ export function TenderCard({
           <span>
             {t.source} · {t.status}
           </span>
-          <span className="normal-case">{trafficLight(item.score, t.deadline).label}</span>
+          <span className="flex items-center gap-1.5 normal-case">
+            <SemaphoreDot light={tl.light} />
+            {tl.text}
+          </span>
         </p>
       </Link>
       {onAction && (

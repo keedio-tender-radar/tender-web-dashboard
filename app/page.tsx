@@ -10,6 +10,12 @@ import { TenderCard } from "@/components/TenderCard";
 import { SkeletonGrid, SkeletonStats } from "@/components/Skeleton";
 import { SemaphoreLegend } from "@/components/SemaphoreLegend";
 
+function money(n: number): string {
+  if (n >= 1_000_000)
+    return `${(n / 1_000_000).toLocaleString("es-ES", { maximumFractionDigits: 1 })} M€`;
+  return `${n.toLocaleString("es-ES")} €`;
+}
+
 export default function RadarPage() {
   const [top, setTop] = useState<TenderWithScore[]>([]);
   const [urgent, setUrgent] = useState<TenderWithScore[]>([]);
@@ -32,18 +38,44 @@ export default function RadarPage() {
 
   return (
     <section className="flex flex-col gap-8 stagger">
-      <div>
-        <h1 className="text-2xl font-bold">Radar diario</h1>
-        <p className="text-neutral-400">Oportunidades priorizadas por encaje con Keedio.</p>
+      <header className="fade-up">
+        <h1 className="font-display text-3xl font-bold sm:text-4xl">Radar diario</h1>
+        {stats ? (
+          <p className="mt-2 text-lg leading-snug text-neutral-300 sm:text-xl">
+            Hoy hay <span className="tnum font-bold text-emerald-400">{stats.go_count}</span>{" "}
+            {stats.go_count === 1 ? "oportunidad" : "oportunidades"}{" "}
+            <span className="font-semibold text-emerald-400">GO</span>
+            {stats.go_budget_total > 0 && (
+              <>
+                {" · "}
+                <span className="tnum font-semibold text-neutral-100">
+                  {money(stats.go_budget_total)}
+                </span>{" "}
+                en juego
+              </>
+            )}
+            {urgent.length > 0 && (
+              <>
+                {" · "}
+                <span className="tnum font-semibold text-amber-400">{urgent.length}</span> con cierre
+                próximo
+              </>
+            )}
+          </p>
+        ) : (
+          <p className="mt-2 text-neutral-400">
+            Oportunidades priorizadas por encaje con Keedio.
+          </p>
+        )}
         {snapshot?.date && (
-          <p className="mt-1 text-xs text-neutral-500">
+          <p className="mt-2 text-xs text-neutral-500">
             Foto diaria #{snapshot.number} · {snapshot.date} · {snapshot.count} activas
           </p>
         )}
-        <div className="mt-2">
+        <div className="mt-3">
           <SemaphoreLegend />
         </div>
-      </div>
+      </header>
 
       {error && (
         <p className="rounded-lg bg-red-950 p-3 text-sm text-red-200">

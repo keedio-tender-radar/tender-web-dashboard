@@ -29,6 +29,7 @@ import {
 import { MarketContextPanel } from "@/components/MarketContextPanel";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { ScoreBreakdownBars } from "@/components/ScoreBreakdownBars";
+import { SemaphoreDot } from "@/components/SemaphoreDot";
 import { cpvLabel } from "@/lib/cpv";
 import { toast } from "@/components/Toaster";
 
@@ -250,7 +251,10 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         <h1 className="text-2xl font-bold sm:text-3xl">{tender.title}</h1>
         <div className="flex shrink-0 flex-col items-end gap-1">
           <ScoreBadge score={score} />
-          <span className="text-sm">{trafficLight(score, tender.deadline).label}</span>
+          <span className="flex items-center gap-1.5 text-sm">
+            <SemaphoreDot light={trafficLight(score, tender.deadline).light} />
+            {trafficLight(score, tender.deadline).text}
+          </span>
         </div>
       </div>
 
