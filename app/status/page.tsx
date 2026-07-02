@@ -13,6 +13,13 @@ const PIPELINE = [
   ["06:45", "Alertas de oportunidades 🟢 GO"],
   ["07:00", "Re-análisis con el pliego"],
   ["07:30", "Radar diario → Telegram"],
+  ["08:00", "Recordatorios de cierre → Telegram"],
+];
+
+const WEEKLY = [
+  ["Lun 05:00", "Adjudicaciones (inteligencia de mercado)"],
+  ["Lun 07:00", "Informe por email → dirección"],
+  ["Lun 08:00", "Informe de mercado → Telegram"],
 ];
 
 function ago(iso: string | null): string {
@@ -33,8 +40,8 @@ function freshness(iso: string | null): string {
 function Card({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="card">
-      <p className="text-xs uppercase tracking-wide text-neutral-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold">{value}</p>
+      <p className="text-xs uppercase tracking-wide text-neutral-400">{label}</p>
+      <p className="tnum mt-1 text-2xl font-bold">{value}</p>
     </div>
   );
 }
@@ -112,7 +119,7 @@ export default function StatusPage() {
           </p>
           <p className="mt-2 text-sm text-neutral-400">
             Presupuesto total en oportunidades GO:{" "}
-            <span className="text-neutral-100">
+            <span className="tnum text-neutral-100">
               {stats.go_budget_total.toLocaleString("es-ES")} EUR
             </span>
           </p>
@@ -178,7 +185,16 @@ export default function StatusPage() {
         <ul className="flex flex-col gap-1 text-sm">
           {PIPELINE.map(([t, d]) => (
             <li key={t} className="flex gap-3">
-              <span className="w-14 shrink-0 font-mono text-neutral-400">{t}</span>
+              <span className="tnum w-14 shrink-0 font-mono text-neutral-400">{t}</span>
+              <span className="text-neutral-300">{d}</span>
+            </li>
+          ))}
+        </ul>
+        <h3 className="mb-2 mt-4 text-sm font-semibold text-neutral-300">Semanales</h3>
+        <ul className="flex flex-col gap-1 text-sm">
+          {WEEKLY.map(([t, d]) => (
+            <li key={t} className="flex gap-3">
+              <span className="w-20 shrink-0 font-mono text-neutral-400">{t}</span>
               <span className="text-neutral-300">{d}</span>
             </li>
           ))}
