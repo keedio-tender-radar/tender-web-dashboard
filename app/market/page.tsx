@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import {
   api,
   type Competitor,
+  type MarketBuyer,
+  type MarketCpv,
   type MarketOverview,
   type MarketStats,
   type Stats,
@@ -30,6 +32,8 @@ export default function MarketPage() {
   const [market, setMarket] = useState<MarketStats | null>(null);
   const [overview, setOverview] = useState<MarketOverview | null>(null);
   const [competitors, setCompetitors] = useState<Competitor[]>([]);
+  const [awardBuyers, setAwardBuyers] = useState<MarketBuyer[]>([]);
+  const [awardCpv, setAwardCpv] = useState<MarketCpv[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,6 +41,8 @@ export default function MarketPage() {
     api.marketStats().then(setMarket).catch(() => setMarket(null));
     api.marketOverview().then(setOverview).catch(() => setOverview(null));
     api.marketCompetitors(undefined, 8).then((r) => setCompetitors(r.competitors)).catch(() => {});
+    api.marketBuyers(8).then((r) => setAwardBuyers(r.buyers)).catch(() => {});
+    api.marketCpv(8).then((r) => setAwardCpv(r.divisions)).catch(() => {});
   }, []);
 
   const pct = (v: number | null) => (v == null ? "—" : `${(v * 100).toFixed(1)}%`);
@@ -133,6 +139,27 @@ export default function MarketPage() {
                   ))}
                 </tbody>
               </table>
+            )}
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {awardBuyers.length > 0 && (
+              <BarList
+                title="Compradores recurrentes (adjudicaciones)"
+                data={Object.fromEntries(awardBuyers.map((b) => [b.buyer.slice(0, 40), b.awards]))}
+                color="bg-sky-500"
+              />
+            )}
+            {awardCpv.length > 0 && (
+              <BarList
+                title="CPV estratégicos (por adjudicaciones)"
+                data={Object.fromEntries(
+                  awardCpv.map((c) => [
+                    cpvLabel(c.cpv_division).split(" · ").slice(1).join(" · ") || c.cpv_division,
+                    c.awards,
+                  ]),
+                )}
+                color="bg-violet-500"
+              />
             )}
           </div>
           <p className="text-xs text-neutral-500">
