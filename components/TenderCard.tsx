@@ -25,7 +25,9 @@ export function TenderCard({
           <ScoreBadge score={item.score} />
         </div>
         <p className="text-sm text-neutral-400">
-          {money(t.budget_amount, t.currency)}
+          <span className="tnum font-medium text-neutral-300">
+            {money(t.budget_amount, t.currency)}
+          </span>
           {t.deadline ? ` · cierre ${t.deadline.slice(0, 10)}` : ""}
           {t.buyer ? ` · ${t.buyer}` : ""}
         </p>
@@ -41,7 +43,7 @@ export function TenderCard({
             ))}
           </div>
         )}
-        <p className="mt-2 flex items-center justify-between text-xs uppercase tracking-wide text-neutral-500">
+        <p className="mt-2 flex items-center justify-between text-xs uppercase tracking-wide text-neutral-400">
           <span>
             {t.source} · {t.status}
           </span>

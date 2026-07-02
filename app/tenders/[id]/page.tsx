@@ -239,7 +239,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   return (
     <section className="flex flex-col gap-5 fade-up">
       <div className="flex items-start justify-between gap-4">
-        <h1 className="text-2xl font-bold">{tender.title}</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">{tender.title}</h1>
         <div className="flex shrink-0 flex-col items-end gap-1">
           <ScoreBadge score={score} />
           <span className="text-sm">{trafficLight(score, tender.deadline).label}</span>
@@ -266,9 +266,11 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         <span>Fuente: {tender.source} · Estado: {tender.status}</span>
         <span>
           Presupuesto:{" "}
-          {tender.budget_amount != null
-            ? `${tender.budget_amount.toLocaleString("es-ES")} ${tender.currency}`
-            : "s/d"}
+          <b className="tnum font-semibold text-neutral-100">
+            {tender.budget_amount != null
+              ? `${tender.budget_amount.toLocaleString("es-ES")} ${tender.currency}`
+              : "s/d"}
+          </b>
         </span>
         <span>Plazo: {tender.deadline ? tender.deadline.slice(0, 10) : "s/d"}</span>
         {tender.cpv.length > 0 && (

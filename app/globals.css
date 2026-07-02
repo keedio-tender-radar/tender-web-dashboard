@@ -26,10 +26,14 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Display (Space Grotesk) para titulares reales; h3 (títulos de tarjeta) en la UI (Inter). */
+  h1,
+  h2 {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+  }
   h1,
   h2,
   h3 {
-    font-family: var(--font-display), var(--font-sans), sans-serif;
     text-wrap: balance;
   }
   h1 {
