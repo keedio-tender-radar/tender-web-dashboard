@@ -4,7 +4,7 @@ function Kpi({ label, value }: { label: string; value: string }) {
   return (
     <div className="card">
       <div className="text-2xl font-bold">{value}</div>
-      <div className="text-xs uppercase tracking-wide text-neutral-500">{label}</div>
+      <div className="text-xs uppercase tracking-wide text-neutral-400">{label}</div>
     </div>
   );
 }
@@ -30,7 +30,7 @@ export function StatsPanel({ stats }: { stats: Stats }) {
       </div>
       {sources.length > 0 && (
         <div className="flex flex-wrap gap-2 text-xs text-neutral-400">
-          <span className="uppercase tracking-wide text-neutral-500">Por fuente:</span>
+          <span className="uppercase tracking-wide text-neutral-400">Por fuente:</span>
           {sources.map(([src, n]) => (
             <span key={src} className="rounded-full bg-[#141a2e] px-2 py-0.5">
               {src} · {n}

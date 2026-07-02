@@ -33,6 +33,9 @@
     letter-spacing: -0.01em;
     text-wrap: balance;
   }
+  p {
+    text-wrap: pretty; /* evita huérfanas en prosa */
+  }
 
   ::selection {
     background: rgba(91, 148, 255, 0.3);
