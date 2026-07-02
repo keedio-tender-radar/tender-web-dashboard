@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 
 import "./globals.css";
@@ -17,8 +17,22 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Keedio Tender Radar",
-  description: "Inteligencia de contratación pública: radar diario de licitaciones con IA.",
+  title: {
+    default: "Keedio Tender Radar",
+    template: "%s · Keedio Tender Radar",
+  },
+  description:
+    "Inteligencia de contratación pública: radar diario de licitaciones con IA, scoring Go/No-Go y análisis de mercado.",
+  applicationName: "Keedio Tender Radar",
+  openGraph: {
+    title: "Keedio Tender Radar",
+    description: "Inteligencia de contratación pública con IA: detecta, puntúa y decide.",
+    type: "website",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0e1a",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
