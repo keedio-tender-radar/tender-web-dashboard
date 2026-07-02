@@ -48,7 +48,7 @@ function CompetitorProfileView() {
             ].map(([label, value]) => (
               <div key={label} className="card">
                 <p className="text-xs text-neutral-400">{label}</p>
-                <p className="text-lg font-semibold">{value}</p>
+                <p className="tnum text-lg font-semibold">{value}</p>
               </div>
             ))}
           </div>

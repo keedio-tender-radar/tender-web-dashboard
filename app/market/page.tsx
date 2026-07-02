@@ -75,8 +75,12 @@ export default function MarketPage() {
         </a>
       </div>
 
+      <h2 className="-mb-2 text-lg font-semibold">Pipeline actual</h2>
       <div className="grid gap-4 md:grid-cols-2">
-        <BarList title="Recomendación" data={relabel(stats.by_recommendation, (k) => REC_LABELS[k] ?? k)} />
+        <BarList
+          title="Recomendación"
+          data={relabel(stats.by_recommendation, (k) => REC_LABELS[k] ?? k)}
+        />
         <BarList title="Por fuente" data={stats.by_source} color="bg-emerald-500" />
         {market && Object.keys(market.top_buyers).length > 0 && (
           <BarList title="Top órganos de contratación" data={market.top_buyers} color="bg-sky-500" />
@@ -95,7 +99,7 @@ export default function MarketPage() {
             {Object.entries(market.avg_budget_by_source).map(([k, v]) => (
               <div key={k} className="flex justify-between text-sm">
                 <span className="uppercase text-neutral-400">{k}</span>
-                <span className="font-medium">{v.toLocaleString("es-ES")} €</span>
+                <span className="tnum font-medium">{v.toLocaleString("es-ES")} €</span>
               </div>
             ))}
           </div>
@@ -107,7 +111,7 @@ export default function MarketPage() {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="text-xl font-bold">Adjudicaciones (histórico público)</h2>
-              <p className="text-sm text-neutral-400">
+              <p className="tnum text-sm text-neutral-400">
                 {overview.awards} adjudicaciones · baja media {pct(overview.avg_baja)} ·{" "}
                 {overview.total_awarded.toLocaleString("es-ES")} € adjudicados
                 {overview.concentration?.label && ` · mercado ${overview.concentration.label}`}
