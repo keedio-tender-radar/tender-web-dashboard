@@ -350,17 +350,26 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
 
       {score && (
         <div className="card">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3 flex items-baseline justify-between gap-4">
             <h2 id="scoring" className="font-semibold scroll-mt-24">Scoring Go/No-Go</h2>
-            <span className="text-sm text-neutral-400">{score.total}/100</span>
+            <span className="tnum shrink-0 text-2xl font-bold leading-none text-neutral-100">
+              {score.total}
+              <span className="text-base font-normal text-neutral-400">/100</span>
+            </span>
           </div>
           <div className="mb-3">
             <ScoreBreakdownBars breakdown={score.breakdown} />
           </div>
-          <ul className="flex flex-col gap-1 text-sm">
+          <ul className="flex flex-col gap-1.5 text-sm">
             {score.factors.map((f, i) => (
-              <li key={i}>
-                {f.kind === "positive" ? "➕" : "➖"} {f.message}
+              <li key={i} className="flex gap-2">
+                <span
+                  aria-hidden
+                  className={f.kind === "positive" ? "text-emerald-400" : "text-rose-400"}
+                >
+                  {f.kind === "positive" ? "▲" : "▼"}
+                </span>
+                <span className="text-neutral-200">{f.message}</span>
               </li>
             ))}
           </ul>
