@@ -262,48 +262,78 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         ))}
       </nav>
 
-      <div className="grid gap-1 text-sm text-neutral-300">
-        <span>Fuente: {tender.source} · Estado: {tender.status}</span>
-        <span>
-          Presupuesto:{" "}
-          <b className="tnum font-semibold text-neutral-100">
-            {tender.budget_amount != null
-              ? `${tender.budget_amount.toLocaleString("es-ES")} ${tender.currency}`
-              : "s/d"}
-          </b>
-        </span>
-        <span>Plazo: {tender.deadline ? tender.deadline.slice(0, 10) : "s/d"}</span>
-        {tender.cpv.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {tender.cpv.map((c) => (
-              <span key={c} className="rounded bg-[#0b1020] px-2 py-0.5 text-xs text-neutral-300">
-                {cpvLabel(c)}
-              </span>
-            ))}
+      <div className="flex flex-col gap-3">
+        {/* Franja de datos clave: los factores de decisión, de un vistazo. */}
+        <dl className="flex flex-wrap gap-x-10 gap-y-3 border-y border-[var(--border)] py-3">
+          <div>
+            <dt className="text-xs uppercase tracking-wide text-neutral-400">Presupuesto</dt>
+            <dd className="tnum text-base font-semibold text-neutral-100">
+              {tender.budget_amount != null
+                ? `${tender.budget_amount.toLocaleString("es-ES")} ${tender.currency}`
+                : "s/d"}
+            </dd>
           </div>
-        )}
-        {tender.url && (
-          <a href={tender.url} target="_blank" rel="noreferrer" className="text-brand">
-            Anuncio original →
-          </a>
-        )}
-        {duplicates.length > 0 && (
-          <span className="text-neutral-400">
-            También publicada en:{" "}
-            {duplicates.map((d, i) => (
-              <span key={d.id}>
-                {i > 0 && " · "}
-                {d.url ? (
-                  <a href={d.url} target="_blank" rel="noreferrer" className="text-brand uppercase">
-                    {d.source}
-                  </a>
-                ) : (
-                  <span className="uppercase">{d.source}</span>
-                )}
-              </span>
-            ))}
-          </span>
-        )}
+          <div>
+            <dt className="text-xs uppercase tracking-wide text-neutral-400">Cierre</dt>
+            <dd className="tnum text-base font-semibold text-neutral-100">
+              {tender.deadline
+                ? (() => {
+                    const d = Math.floor(
+                      (new Date(tender.deadline).getTime() - Date.now()) / 86400000,
+                    );
+                    return d < 0 ? "Vencida" : `${tender.deadline.slice(0, 10)} · ${d}d`;
+                  })()
+                : "s/d"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs uppercase tracking-wide text-neutral-400">Fuente</dt>
+            <dd className="text-base font-semibold uppercase text-neutral-100">{tender.source}</dd>
+          </div>
+          <div>
+            <dt className="text-xs uppercase tracking-wide text-neutral-400">Estado</dt>
+            <dd className="text-base font-semibold text-neutral-100">{tender.status}</dd>
+          </div>
+        </dl>
+
+        <div className="flex flex-col gap-1 text-sm text-neutral-300">
+          {tender.cpv.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {tender.cpv.map((c) => (
+                <span key={c} className="rounded bg-[#0b1020] px-2 py-0.5 text-xs text-neutral-300">
+                  {cpvLabel(c)}
+                </span>
+              ))}
+            </div>
+          )}
+          {tender.url && (
+            <a href={tender.url} target="_blank" rel="noreferrer" className="text-brand">
+              Anuncio original →
+            </a>
+          )}
+          {duplicates.length > 0 && (
+            <span className="text-neutral-400">
+              También publicada en:{" "}
+              {duplicates.map((d, i) => (
+                <span key={d.id}>
+                  {i > 0 && " · "}
+                  {d.url ? (
+                    <a
+                      href={d.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-brand uppercase"
+                    >
+                      {d.source}
+                    </a>
+                  ) : (
+                    <span className="uppercase">{d.source}</span>
+                  )}
+                </span>
+              ))}
+            </span>
+          )}
+        </div>
       </div>
 
       {tender.summary && <p className="text-neutral-200">{tender.summary}</p>}
