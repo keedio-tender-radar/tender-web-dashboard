@@ -17,6 +17,19 @@ export function TenderCard({
   onAction?: (id: string, action: string) => void;
 }) {
   const t = item.tender;
+  const days = t.deadline
+    ? Math.floor((new Date(t.deadline).getTime() - Date.now()) / 86400000)
+    : null;
+  const closeCls =
+    days == null
+      ? ""
+      : days < 0
+        ? "text-neutral-500"
+        : days <= 3
+          ? "text-rose-400"
+          : days <= 7
+            ? "text-amber-400"
+            : "text-neutral-400";
   return (
     <div className="card card-hover flex flex-col">
       <Link href={`/tenders/${t.id}`} className="block">
@@ -24,12 +37,31 @@ export function TenderCard({
           <h3 className="font-semibold leading-snug">{t.title}</h3>
           <ScoreBadge score={item.score} />
         </div>
-        <p className="text-sm text-neutral-400">
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-neutral-400">
           <span className="tnum font-medium text-neutral-300">
             {money(t.budget_amount, t.currency)}
           </span>
-          {t.deadline ? ` · cierre ${t.deadline.slice(0, 10)}` : ""}
-          {t.buyer ? ` · ${t.buyer}` : ""}
+          {days != null && (
+            <>
+              <span aria-hidden className="text-neutral-600">
+                ·
+              </span>
+              <span
+                className={`tnum ${closeCls}`}
+                title={t.deadline ? `Cierre ${t.deadline.slice(0, 10)}` : undefined}
+              >
+                {days < 0 ? "vencida" : `cierre en ${days}d`}
+              </span>
+            </>
+          )}
+          {t.buyer && (
+            <>
+              <span aria-hidden className="text-neutral-600">
+                ·
+              </span>
+              <span className="truncate">{t.buyer}</span>
+            </>
+          )}
         </p>
         {t.cpv.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
