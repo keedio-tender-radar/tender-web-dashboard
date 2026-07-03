@@ -8,3 +8,6 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+
+# impeccable (config/estado local de la skill de diseño)
+.impeccable/
