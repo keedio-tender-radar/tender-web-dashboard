@@ -62,6 +62,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
   const [reason, setReason] = useState("");
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [drafts, setDrafts] = useState<GeneratedDoc[]>([]);
+  const [filesRefresh, setFilesRefresh] = useState(0); // refresca el navegador de ficheros
   const [generating, setGenerating] = useState(false);
   const [pkg, setPkg] = useState<SubmissionPackage | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -111,6 +112,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
         const st = await api.offerDraftsStatus(id);
         if (st.status === "ok") {
           setDrafts(await api.generatedDocuments(id));
+          setFilesRefresh((n) => n + 1); // los borradores ya están en sus carpetas
           toast(`Borradores generados: ${st.count ?? ""}`);
           break;
         }
@@ -130,6 +132,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
     setGenerating(true);
     try {
       const r = await api.extractPliego(id);
+      if (r.cached) setFilesRefresh((n) => n + 1); // el pliego ya está en 00_originales
       toast(
         r.cached
           ? `Pliego analizado: ${r.chars.toLocaleString("es-ES")} caracteres`
@@ -217,6 +220,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
       const p = await api.prepareSubmissionPackage(id);
       setPkg(p);
       setDrafts(await api.generatedDocuments(id));
+      setFilesRefresh((n) => n + 1); // carpetas + Word ya subidos
       toast(`Paquete preparado: ${p.documents} documento(s).`);
       load();
     } catch (e) {
@@ -615,7 +619,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
               Carpeta: <code className="text-neutral-100">{workspace.workspace}</code>
             </p>
             <div className="mt-3">
-              <ExpedientFiles tenderId={id} />
+              <ExpedientFiles tenderId={id} refreshKey={filesRefresh} />
             </div>
             <p className="mt-4 text-neutral-400">Documentos a preparar:</p>
             <ul className="mt-1 list-inside list-disc text-neutral-300">

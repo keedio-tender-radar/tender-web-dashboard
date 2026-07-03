@@ -23,7 +23,13 @@ function fmtSize(n: number): string {
   return `${n} B`;
 }
 
-export function ExpedientFiles({ tenderId }: { tenderId: string }) {
+export function ExpedientFiles({
+  tenderId,
+  refreshKey = 0,
+}: {
+  tenderId: string;
+  refreshKey?: number;
+}) {
   const [files, setFiles] = useState<ExpedientFile[]>([]);
   const [folder, setFolder] = useState(FOLDERS[0]);
   const [configured, setConfigured] = useState(true);
@@ -39,9 +45,11 @@ export function ExpedientFiles({ tenderId }: { tenderId: string }) {
       setFiles([]);
     }
   }
+  // Recarga al montar y cada vez que una acción de la ficha cambia `refreshKey`
+  // (analizar pliego, generar borradores, preparar paquete).
   useEffect(() => {
     load();
-  }, [tenderId]);
+  }, [tenderId, refreshKey]);
 
   async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
