@@ -155,6 +155,91 @@
     background: var(--brand);
   }
 
+  /* Markdown renderizado (borradores, manifiesto, respuestas del chat) */
+  .markdown {
+    color: var(--ink);
+    font-size: 0.875rem;
+    line-height: 1.65;
+  }
+  .markdown > :first-child {
+    margin-top: 0;
+  }
+  .markdown h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem;
+  }
+  .markdown h2 {
+    font-size: 1.02rem;
+    font-weight: 600;
+    margin: 0.9rem 0 0.4rem;
+  }
+  .markdown h3 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin: 0.75rem 0 0.3rem;
+  }
+  .markdown p {
+    margin: 0.5rem 0;
+    text-wrap: pretty;
+  }
+  .markdown ul,
+  .markdown ol {
+    margin: 0.5rem 0;
+    padding-left: 1.25rem;
+  }
+  .markdown ul {
+    list-style: disc;
+  }
+  .markdown ol {
+    list-style: decimal;
+  }
+  .markdown li {
+    margin: 0.15rem 0;
+  }
+  .markdown a {
+    color: var(--brand);
+    text-decoration: underline;
+  }
+  .markdown strong {
+    font-weight: 600;
+  }
+  .markdown code {
+    background: #0b1020;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+  .markdown table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.6rem 0;
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .markdown th,
+  .markdown td {
+    border: 1px solid var(--border);
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .markdown th {
+    background: #0b1020;
+    font-weight: 600;
+  }
+  .markdown blockquote {
+    border-left: 2px solid var(--border);
+    padding-left: 0.75rem;
+    color: var(--muted);
+    margin: 0.5rem 0;
+  }
+  .markdown hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1rem 0;
+  }
+
   /* Skeleton de carga */
   .skeleton {
     border-radius: 10px;

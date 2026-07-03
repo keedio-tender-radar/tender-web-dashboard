@@ -27,6 +27,7 @@ import {
   type Workspace,
 } from "@/lib/api";
 import { MarketContextPanel } from "@/components/MarketContextPanel";
+import { Markdown } from "@/components/Markdown";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { ScoreBreakdownBars } from "@/components/ScoreBreakdownBars";
 import { SemaphoreDot } from "@/components/SemaphoreDot";
@@ -265,6 +266,7 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           ["preguntar", "Preguntar"],
           ["decision", "Decisión"],
           ["expediente", "Expediente"],
+          ["borradores", "Borradores"],
           ["notas", "Notas"],
           ["historial", "Historial"],
         ].map(([id_, label]) => (
@@ -628,19 +630,24 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
           </div>
         )}
         {drafts.length > 0 && (
-          <div className="flex flex-col gap-2">
-            <p className="text-sm text-neutral-400">
-              Borradores de oferta ({drafts.length}):
-            </p>
-            {drafts.map((d) => (
-              <details key={d.id} className="text-sm">
-                <summary className="cursor-pointer text-neutral-200">
-                  📄 {d.title}{" "}
-                  <span className="text-xs text-neutral-500">({d.generated_by})</span>
+          <div id="borradores" className="flex scroll-mt-24 flex-col gap-3">
+            <h3 className="flex items-center gap-2 font-semibold">
+              <FileText className="h-4 w-4 text-brand" /> Borradores de oferta
+              <span className="text-sm font-normal text-neutral-500">({drafts.length})</span>
+            </h3>
+            {drafts.map((d, i) => (
+              <details
+                key={d.id}
+                open={i === 0}
+                className="overflow-hidden rounded-lg border border-[var(--border)]"
+              >
+                <summary className="cursor-pointer list-none bg-[#0b1020]/50 px-3 py-2 text-sm font-medium text-neutral-100 hover:text-white">
+                  {d.title}{" "}
+                  <span className="text-xs font-normal text-neutral-500">· {d.generated_by}</span>
                 </summary>
-                <pre className="mt-1 overflow-x-auto whitespace-pre-wrap rounded bg-[#0b1020] p-2 text-xs text-neutral-300">
-                  {d.content}
-                </pre>
+                <div className="border-t border-[var(--border)] px-4 py-3">
+                  <Markdown>{d.content}</Markdown>
+                </div>
               </details>
             ))}
           </div>
@@ -652,9 +659,9 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             </p>
             <details>
               <summary className="cursor-pointer text-neutral-200">Manifiesto del expediente</summary>
-              <pre className="mt-1 overflow-x-auto whitespace-pre-wrap rounded bg-[#0b1020] p-2 text-xs text-neutral-300">
-                {pkg.manifest_md}
-              </pre>
+              <div className="mt-1 rounded bg-[#0b1020]/50 px-3 py-2">
+                <Markdown>{pkg.manifest_md}</Markdown>
+              </div>
             </details>
             <p className="text-neutral-400">Pendiente (revisión humana):</p>
             <ul className="list-inside list-disc text-neutral-300">
