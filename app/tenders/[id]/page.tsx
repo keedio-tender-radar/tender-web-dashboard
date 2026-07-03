@@ -6,7 +6,6 @@ import {
   FileSearch,
   FileSpreadsheet,
   FileText,
-  Folder,
   Package,
   Star,
 } from "lucide-react";
@@ -28,6 +27,7 @@ import {
   type Workspace,
 } from "@/lib/api";
 import { MarketContextPanel } from "@/components/MarketContextPanel";
+import { ExpedientFiles } from "@/components/ExpedientFiles";
 import { Markdown } from "@/components/Markdown";
 import { ScoreBadge } from "@/components/ScoreBadge";
 import { ScoreBreakdownBars } from "@/components/ScoreBreakdownBars";
@@ -37,18 +37,6 @@ import { toast } from "@/components/Toaster";
 
 const DECISIONS = ["GO", "NO_GO", "REVISAR", "PARTNER", "PRESENTADA", "DESCARTAR"];
 const OUTCOMES = ["pendiente", "presentada", "no_presentada", "ganada", "perdida"];
-
-// Cada carpeta del expediente enlaza a la sección de la ficha donde está su contenido real
-// (mientras el almacenamiento de ficheros no esté implementado).
-const FOLDER_LINKS: Record<string, string> = {
-  "00_originales": "#pliego",
-  "01_analisis": "#scoring",
-  "02_borradores_oferta": "#borradores",
-  "03_administrativo": "#borradores",
-  "04_tecnico": "#borradores",
-  "05_economico": "#expediente",
-  "99_presentacion": "#expediente",
-};
 
 const ACTIONS: { action: string; label: string }[] = [
   { action: "interested", label: "✅ Interesa" },
@@ -626,35 +614,10 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             <p className="text-neutral-300">
               Carpeta: <code className="text-neutral-100">{workspace.workspace}</code>
             </p>
-            <p className="mt-2 text-xs text-neutral-500">
-              Estructura del expediente (haz clic para ir a su contenido):
-            </p>
-            <div className="mt-1 flex flex-wrap gap-1.5">
-              {workspace.folders.map((f) => {
-                const href = FOLDER_LINKS[f];
-                const cls =
-                  "flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[#0b1020] px-2 py-1 text-xs text-neutral-300";
-                const inner = (
-                  <>
-                    <Folder className="h-3.5 w-3.5 text-neutral-500" /> {f}
-                  </>
-                );
-                return href ? (
-                  <a
-                    key={f}
-                    href={href}
-                    className={`${cls} transition-colors hover:border-brand hover:text-white`}
-                  >
-                    {inner}
-                  </a>
-                ) : (
-                  <span key={f} className={cls}>
-                    {inner}
-                  </span>
-                );
-              })}
+            <div className="mt-3">
+              <ExpedientFiles tenderId={id} />
             </div>
-            <p className="mt-3 text-neutral-400">Documentos a preparar:</p>
+            <p className="mt-4 text-neutral-400">Documentos a preparar:</p>
             <ul className="mt-1 list-inside list-disc text-neutral-300">
               {workspace.required_documents.map((d) => (
                 <li key={d}>{d}</li>

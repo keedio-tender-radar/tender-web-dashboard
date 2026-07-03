@@ -283,6 +283,15 @@ export interface GeneratedDoc {
   generated_by: string;
 }
 
+export interface ExpedientFile {
+  id: string;
+  filename: string;
+  folder: string;
+  size: number;
+  content_type: string | null;
+  download_url: string;
+}
+
 export interface SubmissionPackage {
   tender_id: string;
   workspace: string;
@@ -377,6 +386,22 @@ export const api = {
     ),
   generatedDocuments: (id: string) =>
     req<GeneratedDoc[]>(`/api/tenders/${id}/generated-documents`),
+  listDocuments: (id: string) =>
+    req<{ files: ExpedientFile[]; configured: boolean }>(`/api/tenders/${id}/documents`),
+  uploadDocument: (id: string, folder: string, file: File) => {
+    const fd = new FormData();
+    fd.append("folder", folder);
+    fd.append("file", file);
+    // headers vacío → el navegador pone el multipart boundary (no application/json).
+    return req<{ id: string; filename: string; folder: string; size: number }>(
+      `/api/tenders/${id}/documents/upload`,
+      { method: "POST", body: fd, headers: {} },
+    );
+  },
+  deleteDocument: (id: string, docId: string) =>
+    req<{ ok: boolean }>(`/api/tenders/${id}/documents/${docId}`, { method: "DELETE" }),
+  documentDownloadUrl: (id: string, docId: string) =>
+    `${API_URL}/api/tenders/${id}/documents/${docId}/download`,
   prepareSubmissionPackage: (id: string) =>
     req<SubmissionPackage>(`/api/tenders/${id}/prepare-submission-package`, { method: "POST" }),
   getProfile: () => req<Profile>("/api/profile"),
