@@ -621,12 +621,34 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             <div className="mt-3">
               <ExpedientFiles tenderId={id} refreshKey={filesRefresh} />
             </div>
-            <p className="mt-4 text-neutral-400">Documentos a preparar:</p>
-            <ul className="mt-1 list-inside list-disc text-neutral-300">
-              {workspace.required_documents.map((d) => (
-                <li key={d}>{d}</li>
-              ))}
-            </ul>
+            {(() => {
+              const reqDoc = drafts.find((d) => d.kind === "documentos_requeridos");
+              return reqDoc && !reqDoc.content.includes("Pendiente de extraer") ? (
+                <div className="mt-4">
+                  <p className="font-medium text-neutral-200">
+                    Documentos exigidos por este pliego:
+                  </p>
+                  <div className="mt-1">
+                    <Markdown>{reqDoc.content}</Markdown>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="mt-4 text-neutral-400">
+                    Documentos a preparar{" "}
+                    <span className="text-xs text-neutral-500">
+                      (lista estándar — genera los borradores para la lista concreta del pliego)
+                    </span>
+                    :
+                  </p>
+                  <ul className="mt-1 list-inside list-disc text-neutral-300">
+                    {workspace.required_documents.map((d) => (
+                      <li key={d}>{d}</li>
+                    ))}
+                  </ul>
+                </>
+              );
+            })()}
             <p className="mt-2 text-xs text-neutral-500">{workspace.note}</p>
           </div>
         )}
