@@ -40,6 +40,13 @@ export interface TenderWithScore {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// Token de API (si la API lo exige): se obtiene al autenticar y viaja en cada petición.
+function apiTokenHeader(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  const t = localStorage.getItem("ktr_api_token");
+  return t ? { "X-Api-Token": t } : {};
+}
+
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   // Reintentos ante fallo de red: cubre arranque en frío (scale-to-zero) y reinicios por deploy
   // de la API. Presupuesto ~45s (2+4+6+8+8+8+8) para absorber cold-starts largos y restarts.
@@ -47,10 +54,16 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
   let lastErr: unknown;
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     try {
+      // El caller puede fijar headers (p. ej. upload usa {} para que el navegador ponga el
+      // multipart). Respetamos eso e inyectamos siempre el token de API.
+      const baseHeaders =
+        init?.headers !== undefined
+          ? { ...(init.headers as Record<string, string>) }
+          : { "Content-Type": "application/json" };
       const res = await fetch(`${API_URL}${path}`, {
-        headers: { "Content-Type": "application/json" },
         cache: "no-store",
         ...init,
+        headers: { ...baseHeaders, ...apiTokenHeader() },
       });
       if (!res.ok) throw new Error(`API ${res.status}: ${await res.text()}`);
       return res.json() as Promise<T>;
@@ -504,7 +517,7 @@ export const api = {
     ),
   authStatus: () => req<{ enabled: boolean }>("/api/auth/status"),
   authCheck: (password: string) =>
-    req<{ ok: boolean }>("/api/auth/check", {
+    req<{ ok: boolean; token?: string }>("/api/auth/check", {
       method: "POST",
       body: JSON.stringify({ password }),
     }),

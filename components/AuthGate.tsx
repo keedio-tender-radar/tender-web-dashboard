@@ -28,9 +28,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   async function submit() {
     setError(null);
     try {
-      const { ok } = await api.authCheck(pw);
+      const { ok, token } = await api.authCheck(pw);
       if (ok) {
         localStorage.setItem("ktr_auth", "1");
+        // Si la API exige token en las lecturas, lo guardamos para enviarlo en cada petición.
+        if (token) localStorage.setItem("ktr_api_token", token);
         setState("ok");
       } else {
         setError("Contraseña incorrecta.");
