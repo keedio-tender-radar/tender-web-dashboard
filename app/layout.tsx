@@ -43,6 +43,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="mx-auto max-w-6xl px-5 py-8 sm:px-6 sm:py-10">
           <AuthGate>{children}</AuthGate>
         </main>
+        <footer className="mx-auto max-w-6xl px-5 pb-8 text-xs text-neutral-500 sm:px-6">
+          <span>Keedio Tender Radar · Uso interno y confidencial</span>
+          <span aria-hidden className="mx-2 text-neutral-700">
+            ·
+          </span>
+          <a href="/legal" className="hover:text-brand">
+            Aviso legal y privacidad
+          </a>
+        </footer>
         <Toaster />
       </body>
     </html>
