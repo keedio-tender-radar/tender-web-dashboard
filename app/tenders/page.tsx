@@ -19,6 +19,7 @@ export default function TendersPage() {
   const [order, setOrder] = useState("recent");
   const [light, setLight] = useState("");
   const [minScore, setMinScore] = useState("");
+  const [maxDays, setMaxDays] = useState("");
   const [source, setSource] = useState("");
   const [bodySearch, setBodySearch] = useState("");
   const [body, setBody] = useState(""); // órgano aplicado (debounced)
@@ -48,6 +49,7 @@ export default function TendersPage() {
     if (p.get("order")) setOrder(p.get("order")!);
     if (p.get("light")) setLight(p.get("light")!);
     if (p.get("min_score")) setMinScore(p.get("min_score")!);
+    if (p.get("max_days")) setMaxDays(p.get("max_days")!);
     if (p.get("source")) setSource(p.get("source")!);
     if (p.get("body")) setBodySearch(p.get("body")!);
   }, []);
@@ -60,11 +62,12 @@ export default function TendersPage() {
     if (order !== "recent") p.set("order", order);
     if (light) p.set("light", light);
     if (minScore) p.set("min_score", minScore);
+    if (maxDays) p.set("max_days", maxDays);
     if (source) p.set("source", source);
     if (body) p.set("body", body);
     const qs = p.toString();
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
-  }, [status, q, order, light, minScore, source, body]);
+  }, [status, q, order, light, minScore, maxDays, source, body]);
 
   // debounce de la búsqueda
   useEffect(() => {
@@ -82,7 +85,7 @@ export default function TendersPage() {
   }, [bodySearch]);
 
   // resetea la página al cambiar filtros u orden
-  useEffect(() => setPage(0), [status, order, light, minScore, source, body]);
+  useEffect(() => setPage(0), [status, order, light, minScore, maxDays, source, body]);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -95,6 +98,7 @@ export default function TendersPage() {
         order,
         traffic_light: light || undefined,
         min_score: minScore ? Number(minScore) : undefined,
+        max_days_remaining: maxDays ? Number(maxDays) : undefined,
         source: source || undefined,
         contracting_body: body || undefined,
         limit: PAGE_SIZE + 1,
@@ -103,13 +107,15 @@ export default function TendersPage() {
       .then(setTenders)
       .catch((e) => setError(String(e)))
       .finally(() => setLoading(false));
-  }, [status, q, order, light, minScore, source, body, page]);
+  }, [status, q, order, light, minScore, maxDays, source, body, page]);
 
   useEffect(load, [load]);
 
   const hasNext = tenders.length > PAGE_SIZE;
   const visible = tenders.slice(0, PAGE_SIZE);
-  const hasFilters = !!(status || search || light || minScore || source || bodySearch || order !== "recent");
+  const hasFilters = !!(
+    status || search || light || minScore || maxDays || source || bodySearch || order !== "recent"
+  );
 
   function clearFilters() {
     setStatus("");
@@ -117,6 +123,7 @@ export default function TendersPage() {
     setOrder("recent");
     setLight("");
     setMinScore("");
+    setMaxDays("");
     setSource("");
     setBodySearch("");
   }
@@ -210,6 +217,17 @@ export default function TendersPage() {
           <option value="50">≥ 50</option>
           <option value="70">≥ 70</option>
           <option value="85">≥ 85</option>
+        </select>
+        <select
+          value={maxDays}
+          aria-label="Cierre en"
+          onChange={(e) => setMaxDays(e.target.value)}
+          className="min-w-[120px] flex-1 rounded-lg border border-neutral-700 bg-[#141a2e] px-3 py-1.5 text-sm sm:flex-none"
+        >
+          <option value="">Cierre</option>
+          <option value="7">Cierra ≤ 7 d</option>
+          <option value="15">Cierra ≤ 15 d</option>
+          <option value="30">Cierra ≤ 30 d</option>
         </select>
         <select
           value={source}
