@@ -14,6 +14,7 @@ export interface Tender {
   deadline: string | null;
   url: string | null;
   status: string;
+  created_at?: string;
 }
 
 export interface ScoreFactor {

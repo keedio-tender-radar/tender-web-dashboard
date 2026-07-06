@@ -33,11 +33,28 @@ export function TenderCard({
           : days <= 7
             ? "text-amber-400"
             : "text-neutral-400";
+  const isNew = (() => {
+    if (!t.created_at) return false;
+    const c = new Date(t.created_at);
+    const n = new Date();
+    return (
+      c.getFullYear() === n.getFullYear() &&
+      c.getMonth() === n.getMonth() &&
+      c.getDate() === n.getDate()
+    );
+  })();
   return (
     <div className="card card-hover flex flex-col">
       <Link href={`/tenders/${t.id}`} className="block">
         <div className="mb-2 flex items-start justify-between gap-3">
-          <h3 className="font-semibold leading-snug">{t.title}</h3>
+          <h3 className="font-semibold leading-snug">
+            {isNew && (
+              <span className="mr-1.5 rounded-full bg-emerald-500/15 px-1.5 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
+                Nueva
+              </span>
+            )}
+            {t.title}
+          </h3>
           <ScoreBadge score={item.score} />
         </div>
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-neutral-400">
