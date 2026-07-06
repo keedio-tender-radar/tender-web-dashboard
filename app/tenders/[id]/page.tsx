@@ -611,6 +611,20 @@ export default function TenderDetail({ params }: { params: Promise<{ id: string 
             >
               <FileSpreadsheet className="h-4 w-4" /> Plan (Excel)
             </a>
+            <a
+              href={api.planDetalladoUrl(id)}
+              title="Modelo exhaustivo (15 hojas): Go/No-Go, jornadas, costes por perfil, precio, simuladores de puntos, checklist y riesgos"
+              className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+            >
+              <FileSpreadsheet className="h-4 w-4" /> Modelo detallado
+            </a>
+            <a
+              href={api.planAgilUrl(id)}
+              title="Modelo ágil (5 hojas): simulador de escenarios de margen (CAPEX/OPEX) con semáforos vs presupuesto"
+              className="flex items-center gap-1.5 rounded-lg border border-neutral-700 px-3 py-1.5 text-sm hover:border-brand"
+            >
+              <FileSpreadsheet className="h-4 w-4" /> Modelo ágil
+            </a>
           </div>
         </div>
         {workspace && (
