@@ -78,6 +78,7 @@ export interface ListParams {
   traffic_light?: string;
   min_score?: number;
   max_days_remaining?: number;
+  cpv?: string;
 }
 
 export type TrafficLight = "green" | "yellow" | "red" | "gray";
@@ -385,6 +386,7 @@ export const api = {
     if (params.contracting_body) qs.set("contracting_body", params.contracting_body);
     if (params.recommendation) qs.set("recommendation", params.recommendation);
     if (params.traffic_light) qs.set("traffic_light", params.traffic_light);
+    if (params.cpv) qs.set("cpv", params.cpv);
     if (params.min_score != null) qs.set("min_score", String(params.min_score));
     if (params.max_days_remaining != null)
       qs.set("max_days_remaining", String(params.max_days_remaining));
