@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { Download, FileText } from "lucide-react";
 
 import {
   api,
@@ -68,12 +68,21 @@ export default function MarketPage() {
             licitaciones puntuadas · score medio {stats.avg_score}/100.
           </p>
         </div>
-        <a
-          href={api.marketCsvUrl()}
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
-        >
-          <Download className="h-4 w-4" /> CSV
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={api.marketReportPdfUrl()}
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+            title="Informe de inteligencia de mercado en PDF (para dirección)"
+          >
+            <FileText className="h-4 w-4" /> Informe (.pdf)
+          </a>
+          <a
+            href={api.marketCsvUrl()}
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+          >
+            <Download className="h-4 w-4" /> CSV
+          </a>
+        </div>
       </div>
 
       <h2 className="-mb-2 text-lg font-semibold">Pipeline actual</h2>

@@ -449,6 +449,7 @@ export const api = {
   marketCpv: (limit = 10) =>
     req<{ divisions: MarketCpv[] }>(`/api/market/cpv?limit=${limit}`),
   marketAwardsCsvUrl: () => `${API_URL}/api/market/awards.csv`,
+  marketReportPdfUrl: () => `${API_URL}/api/market/report.pdf`,
   competitorProfile: (name: string) =>
     req<CompetitorProfile>(`/api/market/competitor?name=${encodeURIComponent(name)}`),
   tenderMarketContext: (id: string) =>
