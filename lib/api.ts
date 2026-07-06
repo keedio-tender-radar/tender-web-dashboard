@@ -283,6 +283,15 @@ export interface GeneratedDoc {
   generated_by: string;
 }
 
+export interface ExpedienteRow {
+  tender: Tender;
+  score: TenderScore | null;
+  steps: { pliego: boolean; borradores: boolean; paquete: boolean };
+  completeness: number;
+  docs_count: number;
+  days_remaining: number | null;
+}
+
 export interface ExpedientFile {
   id: string;
   filename: string;
@@ -442,6 +451,7 @@ export const api = {
   packageMdUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.md`,
   packageDocxUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.docx`,
   packagePdfUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.pdf`,
+  expedientes: () => req<ExpedienteRow[]>("/api/tenders/expedientes"),
   planXlsxUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan.xlsx`,
   planAgilUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan-agil.xlsx`,
   planDetalladoUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan-detallado.xlsx`,
