@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Logo } from "@/components/Logo";
+import { UserChip } from "@/components/UserChip";
 
 const LINKS: { href: string; label: string }[] = [
   { href: "/", label: "Radar" },
@@ -39,6 +40,7 @@ export function NavBar() {
             </Link>
           ))}
         </div>
+        <UserChip />
       </nav>
     </header>
   );

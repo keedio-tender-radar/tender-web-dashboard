@@ -40,6 +40,12 @@ export interface TenderWithScore {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// Identidad del usuario (ligera, para atribuir acciones/decisiones/notas). Se fija en la NavBar.
+export function currentUser(): string {
+  if (typeof window === "undefined") return "";
+  return localStorage.getItem("ktr_user") || "";
+}
+
 // Token de API (si la API lo exige): se obtiene al autenticar y viaja en cada petición.
 function apiTokenHeader(): Record<string, string> {
   if (typeof window === "undefined") return {};
@@ -410,7 +416,10 @@ export const api = {
   },
   learningInsights: (id: string) => req<LearningInsights>(`/api/tenders/${id}/learning-insights`),
   recordDecision: (id: string, body: DecisionInput) =>
-    req(`/api/tenders/${id}/decision`, { method: "POST", body: JSON.stringify(body) }),
+    req(`/api/tenders/${id}/decision`, {
+      method: "POST",
+      body: JSON.stringify({ actor: currentUser() || undefined, ...body }),
+    }),
   markInteresting: (id: string) =>
     req<Workspace>(`/api/tenders/${id}/mark-interesting`, { method: "POST" }),
   generateOfferDrafts: (id: string) =>
@@ -449,7 +458,7 @@ export const api = {
   addNote: (id: string, body: string, author?: string) =>
     req<Note>(`/api/tenders/${id}/notes`, {
       method: "POST",
-      body: JSON.stringify({ body, author }),
+      body: JSON.stringify({ body, author: author || currentUser() || undefined }),
     }),
   marketStats: () => req<MarketStats>("/api/tenders/stats/market"),
   // Inteligencia de mercado (adjudicaciones históricas, MVP-5).
@@ -533,7 +542,7 @@ export const api = {
   postAction: (id: string, action: string) =>
     req(`/api/tenders/${id}/actions`, {
       method: "POST",
-      body: JSON.stringify({ action, actor: "dashboard" }),
+      body: JSON.stringify({ action, actor: currentUser() || "dashboard" }),
     }),
   extract: (id: string) => req<Extraction>(`/api/tenders/${id}/extract`, { method: "POST" }),
   reanalyze: (id: string) => req<TenderScore>(`/api/tenders/${id}/reanalyze`, { method: "POST" }),
