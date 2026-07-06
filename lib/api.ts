@@ -82,6 +82,16 @@ export interface ListParams {
 
 export type TrafficLight = "green" | "yellow" | "red" | "gray";
 
+export interface OutcomesSummary {
+  total_decisions: number;
+  presented: number;
+  won: number;
+  lost: number;
+  win_rate: number | null;
+  won_value: number;
+  by_outcome: Record<string, number>;
+}
+
 export interface LearningInsights {
   external_tender_id: string;
   similar_count: number;
@@ -453,6 +463,7 @@ export const api = {
   packageDocxUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.docx`,
   packagePdfUrl: (id: string) => `${API_URL}/api/tenders/${id}/package.pdf`,
   expedientes: () => req<ExpedienteRow[]>("/api/tenders/expedientes"),
+  outcomesSummary: () => req<OutcomesSummary>("/api/tenders/outcomes-summary"),
   planXlsxUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan.xlsx`,
   planAgilUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan-agil.xlsx`,
   planDetalladoUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan-detallado.xlsx`,

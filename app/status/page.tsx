@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CalendarPlus, Sparkles } from "lucide-react";
 
-import { api, type DailySnapshot, type Stats } from "@/lib/api";
+import { api, type DailySnapshot, type OutcomesSummary, type Stats } from "@/lib/api";
 import { SemaphoreDot } from "@/components/SemaphoreDot";
 import { SkeletonStats } from "@/components/Skeleton";
 
@@ -31,6 +31,14 @@ function ago(iso: string | null): string {
   const h = Math.floor(mins / 60);
   if (h < 24) return `hace ${h} h`;
   return `hace ${Math.floor(h / 24)} d`;
+}
+
+function money(n: number): string {
+  return new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(n);
 }
 
 function freshnessLight(iso: string | null): string {
@@ -61,6 +69,7 @@ export default function StatusPage() {
   const [history, setHistory] = useState<{ date: string; count: number; items: { tender_id: string }[] }[]>([]);
   const [services, setServices] = useState<Svc | null>(null);
   const [runs, setRuns] = useState<Runs>([]);
+  const [outcomes, setOutcomes] = useState<OutcomesSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,6 +78,7 @@ export default function StatusPage() {
     api.dailySnapshots(14).then(setHistory).catch(() => setHistory([]));
     api.servicesStatus().then(setServices).catch(() => setServices(null));
     api.runsSummary().then((r) => setRuns(r.jobs)).catch(() => setRuns([]));
+    api.outcomesSummary().then(setOutcomes).catch(() => setOutcomes(null));
   }, []);
 
   // Novedades: tenders en la foto de hoy que no estaban en la anterior.
@@ -107,6 +117,47 @@ export default function StatusPage() {
         <Card label="GO" value={stats.go_count} />
         <Card label="Score medio" value={stats.avg_score} />
       </div>
+
+      {outcomes && outcomes.total_decisions > 0 ? (
+        <div className="card">
+          <div className="mb-3 flex items-baseline justify-between gap-3">
+            <h2 className="font-semibold">Resultados del pipeline</h2>
+            {outcomes.win_rate != null && (
+              <span className="tnum text-sm text-neutral-400">
+                win-rate <b className="text-brand">{outcomes.win_rate}%</b>
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-neutral-400">Presentadas</p>
+              <p className="tnum mt-1 text-2xl font-bold">{outcomes.presented}</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-neutral-400">Ganadas</p>
+              <p className="tnum mt-1 text-2xl font-bold text-emerald-400">{outcomes.won}</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-neutral-400">Perdidas</p>
+              <p className="tnum mt-1 text-2xl font-bold text-rose-400">{outcomes.lost}</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-neutral-400">Valor adjudicado</p>
+              <p className="tnum mt-1 text-2xl font-bold">
+                {outcomes.won_value ? money(outcomes.won_value) : "—"}
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : outcomes ? (
+        <div className="card">
+          <h2 className="mb-1 font-semibold">Resultados del pipeline</h2>
+          <p className="text-sm text-neutral-500">
+            Aún no hay decisiones registradas. Marca el resultado (presentada / ganada / perdida)
+            en la ficha de cada licitación para ver aquí el win-rate y el valor adjudicado.
+          </p>
+        </div>
+      ) : null}
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="card">
