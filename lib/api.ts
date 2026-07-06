@@ -456,6 +456,7 @@ export const api = {
   planXlsxUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan.xlsx`,
   planAgilUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan-agil.xlsx`,
   planDetalladoUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan-detallado.xlsx`,
+  expedienteZipUrl: (id: string) => `${API_URL}/api/tenders/${id}/expediente.zip`,
   calendarIcsUrl: () => `${API_URL}/api/tenders/calendar.ics`,
   listAlerts: () => req<SavedAlert[]>("/api/alerts"),
   createAlert: (a: Partial<SavedAlert>) =>

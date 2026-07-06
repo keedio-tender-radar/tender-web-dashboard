@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { Download, Folder, Trash2, Upload } from "lucide-react";
+import { Archive, Download, Folder, Trash2, Upload } from "lucide-react";
 
 import { api, type ExpedientFile } from "@/lib/api";
 import { toast } from "@/components/Toaster";
@@ -86,6 +86,17 @@ export function ExpedientFiles({
         <p className="text-xs text-amber-400">
           Almacenamiento no configurado — la subida de ficheros no está disponible.
         </p>
+      )}
+      {files.length > 0 && (
+        <div className="flex justify-end">
+          <a
+            href={api.expedienteZipUrl(tenderId)}
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs hover:border-brand"
+            title="Descarga todos los ficheros del expediente en un .zip"
+          >
+            <Archive className="h-3.5 w-3.5" /> Descargar expediente (.zip)
+          </a>
+        </div>
       )}
       <div className="flex flex-wrap gap-1.5">
         {FOLDERS.map((fld) => {
