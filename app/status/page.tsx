@@ -102,13 +102,22 @@ export default function StatusPage() {
     <section className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Estado del sistema</h1>
-        <a
-          href={api.calendarIcsUrl()}
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
-          title="Suscribe los cierres de licitación a tu Google/Outlook Calendar"
-        >
-          <CalendarPlus className="h-4 w-4" /> Suscribir calendario (.ics)
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={api.calendarIcsUrl()}
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:border-brand"
+            title="Cierres de las licitaciones en seguimiento o con recomendación GO (Google/Outlook)"
+          >
+            <CalendarPlus className="h-4 w-4" /> Suscribir calendario (.ics)
+          </a>
+          <a
+            href={api.calendarIcsUrl("all")}
+            className="text-xs text-neutral-500 hover:text-brand"
+            title="Incluye todas las licitaciones activas con plazo"
+          >
+            todas
+          </a>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

@@ -493,7 +493,8 @@ export const api = {
   planAgilUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan-agil.xlsx`,
   planDetalladoUrl: (id: string) => `${API_URL}/api/tenders/${id}/plan-detallado.xlsx`,
   expedienteZipUrl: (id: string) => `${API_URL}/api/tenders/${id}/expediente.zip`,
-  calendarIcsUrl: () => `${API_URL}/api/tenders/calendar.ics`,
+  calendarIcsUrl: (scope?: "all") =>
+    `${API_URL}/api/tenders/calendar.ics${scope ? `?scope=${scope}` : ""}`,
   listAlerts: () => req<SavedAlert[]>("/api/alerts"),
   createAlert: (a: Partial<SavedAlert>) =>
     req<SavedAlert>("/api/alerts", { method: "POST", body: JSON.stringify(a) }),
